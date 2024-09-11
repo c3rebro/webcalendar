@@ -4,7 +4,7 @@
  */
 
 "use strict";
-const kalender = `..//..//webcalendar//kalender.php`;
+const kalender = `..//..//webcalendar//calendar.php`;
 const heute = new Date();
 
 // Kalender nach dem laden der Seite aufrufen
