@@ -1,4 +1,4 @@
-This is a Fork from Werner Zenks webcalendar. You can obtain a copy of the original from [Tommy Hermanns's Archive]([https://www.mobirise-tutorials.com/Download-Archiv/](tadaa))
+This is a Fork from Werner Zenks webcalendar. You can obtain a copy of the original from [Tommy Hermanns's Archive](https://www.mobirise-tutorials.com/Download-Archiv/)
 
 # webcalendar
 
@@ -13,14 +13,5 @@ copy to your www dir and insert a div with the "kalender" keyword id
 <div id="kalender" style="height: auto;"></div>
 ```
 
-## Usage
-
-Here is a *dangerous* hack to extract the title from a webpage:
-```python
-#!python
-
 ## Demo
 
-Here is a *dangerous* hack to extract the title from a webpage:
-```python
-#!python
