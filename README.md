@@ -13,4 +13,4 @@ copy to your www dir and insert a div with the "kalender" keyword id
 ```
 
 ## Demo
-
+Watch a demo here. Login is "user" with password "0000": [DEMO](https://c3rebro.github.io/webcalendar/)
