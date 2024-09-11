@@ -12,5 +12,15 @@ copy to your www dir and insert a div with the "kalender" keyword id
 <div id="kalender" style="height: auto;"></div>
 ```
 
-## Demo
-Watch a demo here. Login is "user" with password "0000": [DEMO](https://c3rebro.github.io/webcalendar/)
+## Screenshots
+Default "light" layout: <br>
+<img src="docs/Clipboard01.jpg" width="800px">
+
+Summary of appointment: <br>
+<img src="docs/Clipboard02.jpg" width="800px">
+
+Login for administrator: <br>
+<img src="docs/Clipboard03.jpg" width="800px">
+
+Create a new event:<br>
+<img src="docs/Clipboard04.jpg" width="800px">
