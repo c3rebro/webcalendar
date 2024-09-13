@@ -91,11 +91,11 @@ const showCalendar = (year, month) => {
       });
 
       // Select calendar
-      let elems = document.querySelectorAll("#month,#year,#calendar");
+      let elems = document.querySelectorAll("#month,#year,#calendarSelect");
       elems.forEach((elem) => {
         document.getElementById(elem.id).addEventListener("click", () => {
           showForm(
-            "calendar",
+            "calendarSelect",
             1,
             document.getElementById("month").dataset.month,
             document.getElementById("year").dataset.year
