@@ -1,191 +1,191 @@
 /*
- *  Event-Kalender (SQLite) - javascript.js (utf-8)
- * von Werner Zenk
+ *  Event Calendar (SQLite) - javascript.js (utf-8)
+ * by Werner Zenk
  */
 
 "use strict";
-const kalender = `..//..//webcalendar//kalender.php`;
-const heute = new Date();
+const calendar = `webcalendar.php`;
+const today = new Date();
 
-// Kalender nach dem laden der Seite aufrufen
+// Call calendar after the page loads
 window.addEventListener(
   "DOMContentLoaded",
   () => {
-    document.getElementById("kalender").textContent = `Kalender wird geladen ...`;
-    zeigeKalender(heute.getFullYear(), heute.getMonth() + 1);
+    document.getElementById("zenk-calendar").textContent = `Loading calendar ...`;
+    showCalendar(today.getFullYear(), today.getMonth() + 1);
 
-    // Tastaturanweisungen (passive: false!)
-    window.addEventListener("keydown", tastaturAnweisungen);
-    window.addEventListener("resize", fensterPosition);
+    // Keyboard instructions (passive: false!)
+    window.addEventListener("keydown", keyboardInstructions);
+    window.addEventListener("resize", windowPosition);
   },
   { passive: true }
 );
 
-// Kalender anzeigen
-const zeigeKalender = (jahr, monat) => {
-  // Monat und Jahr weiterschalten
-  jahr = parseInt(jahr);
-  monat = parseInt(monat);
-  jahr = monat < 1 ? (jahr -= 1) : monat > 12 ? (jahr += 1) : jahr;
-  monat = monat < 1 ? 12 : monat > 12 ? 1 : monat;
+// Show calendar
+const showCalendar = (year, month) => {
+  // Switch month and year
+  year = parseInt(year);
+  month = parseInt(month);
+  year = month < 1 ? (year -= 1) : month > 12 ? (year += 1) : year;
+  month = month < 1 ? 12 : month > 12 ? 1 : month;
 
-  // Anfrage senden
-  fetch(`${kalender}?kalender&jahr=${jahr}&monat=${monat}`, {
+  // Send request
+  fetch(`${calendar}?calendar&year=${year}&month=${month}`, {
     method: "GET",
   })
-    .then((antwort) => {
-      return antwort.text();
+    .then((response) => {
+      return response.text();
     })
-    .then((antwort) => {
-      document.getElementById("kalender").innerHTML = antwort;
+    .then((response) => {
+      document.getElementById("zenk-calendar").innerHTML = response;
 
-      // Monatsbild anzeigen
-      if (document.getElementById("monatsbild")) {
-        var mb = document.getElementById("monatsbild").dataset.bildname;
-        document.getElementById("monatsbild").style = `background: url(${mb})`;
+      // Show month image
+      if (document.getElementById("month-image")) {
+        var mb = document.getElementById("month-image").dataset.imageName;
+        document.getElementById("month-image").style = `background: url(${mb})`;
       }
 
-      // Eventlistener registrieren (Navigation)
-      document.getElementById("monatMinus").addEventListener("click", () => {
-        monat--;
-        zeigeKalender(jahr, monat);
+      // Register event listeners (Navigation)
+      document.getElementById("monthMinus").addEventListener("click", () => {
+        month--;
+        showCalendar(year, month);
       });
 
-      document.getElementById("monatPlus").addEventListener("click", () => {
-        monat++;
-        zeigeKalender(jahr, monat);
+      document.getElementById("monthPlus").addEventListener("click", () => {
+        month++;
+        showCalendar(year, month);
       });
 
-      document.getElementById("kalenderAktuell").addEventListener("click", () => {
-        zeigeKalender(heute.getFullYear(), heute.getMonth() + 1);
+      document.getElementById("calendarCurrent").addEventListener("click", () => {
+        showCalendar(today.getFullYear(), today.getMonth() + 1);
       });
 
-      document.getElementById("jahrMinus").addEventListener("click", () => {
-        jahr--;
-        zeigeKalender(jahr, monat);
+      document.getElementById("yearMinus").addEventListener("click", () => {
+        year--;
+        showCalendar(year, month);
       });
 
-      document.getElementById("jahrPlus").addEventListener("click", () => {
-        jahr++;
-        zeigeKalender(jahr, monat);
+      document.getElementById("yearPlus").addEventListener("click", () => {
+        year++;
+        showCalendar(year, month);
       });
 
-      // Monatstage
-      let tage = document.querySelectorAll(".tag");
-      tage.forEach((tag) => {
-        tag.addEventListener("click", (e) => {
-          let teil = e.target.dataset.monatstag.split("-");
-          zeigeFormular("eintragen", teil[2], teil[1], teil[0]);
+      // Month days
+      let days = document.querySelectorAll(".day");
+      days.forEach((day) => {
+        day.addEventListener("click", (e) => {
+          let parts = e.target.dataset.monthDay.split("-");
+          showForm("add", parts[2], parts[1], parts[0]);
         });
       });
 
       // Events
-      let evts = document.querySelectorAll(".event");
-      evts.forEach((evt) => {
-        // Event einfärben
-        let teil = evt.dataset.farbe.split("|");
-        evt.style = `background: ${teil[0]}; color: ${teil[1]};`;
-        evt.addEventListener("click", (e) => {
-          zeigeFormular("bearbeiten", 0, 0, 0, e.target.dataset.event);
+      let events = document.querySelectorAll(".event");
+      events.forEach((event) => {
+        // Color the event
+        let parts = event.dataset.color.split("|");
+        event.style = `background: ${parts[0]}; color: ${parts[1]};`;
+        event.addEventListener("click", (e) => {
+          showForm("edit", 0, 0, 0, e.target.dataset.event);
         });
       });
 
-      // Kalender auswählen
-      let elem = document.querySelectorAll("#monat,#jahr,#calendar");
-      elem.forEach((ele) => {
-        document.getElementById(ele.id).addEventListener("click", () => {
-          zeigeFormular(
+      // Select calendar
+      let elems = document.querySelectorAll("#month,#year,#calendar");
+      elems.forEach((elem) => {
+        document.getElementById(elem.id).addEventListener("click", () => {
+          showForm(
             "calendar",
             1,
-            document.getElementById("monat").dataset.monat,
-            document.getElementById("jahr").dataset.jahr
+            document.getElementById("month").dataset.month,
+            document.getElementById("year").dataset.year
           );
         });
       });
 
-      // An.- und Abmeldung
+      // Login and logout
       if (document.getElementById("log")) {
         document.getElementById("log").addEventListener("click", () => {
-          zeigeFormular("anmeldung", 1, monat, jahr);
+          showForm("login", 1, month, year);
         });
       }
 
-      // Wochennummern ausblenden
-      document.getElementById("wochennr").addEventListener("click", zeigeWochennummern);
-      let wochen = document.querySelectorAll(".woche");
-      wochen.forEach((woche) => {
-        woche.classList.add("zeigeWoche");
+      // Hide week numbers
+      document.getElementById("showWeekNrSelect").addEventListener("click", showWeekNumbers);
+      let weeks = document.querySelectorAll(".week");
+      weeks.forEach((week) => {
+        week.classList.add("showWeek");
       });
     });
 };
 
-// Formular anzeigen
-const zeigeFormular = (form, tag, monat, jahr, id = 0) => {
-  // Aktiven Event setzen
-  aktivEvent(id);
+// Show form
+const showForm = (form, day, month, year, id = 0) => {
+  // Set active event
+  activeEvent(id);
 
-  // Anfrage senden
-  fetch(`${kalender}?${form}&tag=${tag}&monat=${monat}&jahr=${jahr}&id=${id}`, {
+  // Send request
+  fetch(`${calendar}?${form}&day=${day}&month=${month}&year=${year}&id=${id}`, {
     method: "GET",
   })
-    .then((antwort) => {
-      return antwort.text();
+    .then((response) => {
+      return response.text();
     })
-    .then((antwort) => {
-      ausgabe(antwort);
+    .then((response) => {
+      output(response);
     });
 };
 
-// Ausgabe
-const ausgabe = (antwort) => {
-  if (antwort.indexOf("|") == 4 && antwort.length <= 7) {
-    // Kalender anzeigen
-    let teil = antwort.split("|");
-    zeigeKalender(teil[0], teil[1]);
+// Output
+const output = (response) => {
+  if (response.indexOf("|") == 4 && response.length <= 7) {
+    // Show calendar
+    let parts = response.split("|");
+    showCalendar(parts[0], parts[1]);
   } else {
-    // Fenster erstellen
-    document.getElementById("kalender").appendChild(document.createElement("div")).setAttribute("id", "anzeige");
-    document.getElementById("anzeige").innerHTML = antwort;
+    // Create window
+    document.getElementById("zenk-calendar").appendChild(document.createElement("div")).setAttribute("id", "display");
+    document.getElementById("display").innerHTML = response;
 
-    // Fenster Position und Fenster bewegen
-    fensterPosition();
-    fensterBewegen("#form", "#titel");
+    // Window position and move window
+    windowPosition();
+    moveWindow("#form", "#title");
 
-    // Event einfärben
-    if (document.getElementById("eventtext")) {
-      let teil = document.getElementById("eventtext").dataset.farbe.split("|");
-      document.getElementById("eventtext").style = `background: ${teil[0]}; color: ${teil[1]};`;
+    // Color the event
+    if (document.getElementById("eventText")) {
+      let parts = document.getElementById("eventText").dataset.color.split("|");
+      document.getElementById("eventText").style = `background: ${parts[0]}; color: ${parts[1]};`;
     }
 
-    // Eventlistener registrieren
-    if (document.getElementById("schliessen")) {
-      document.getElementById("schliessen").addEventListener("click", () => {
-        document.getElementById("anzeige").remove();
-        aktivEvent();
+    // Register event listeners
+    if (document.getElementById("close")) {
+      document.getElementById("close").addEventListener("click", () => {
+        document.getElementById("display").remove();
+        activeEvent();
       });
     }
 
-    // Auswahlliste scrollen beim drehen mit dem Mausrad
-    if (document.getElementById("selMonat")) {
-      document.getElementById("selMonat").addEventListener("wheel", auswahllisteAendern, { passive: false });
-      document.getElementById("selJahr").addEventListener("wheel", auswahllisteAendern, { passive: false });
+    // Scroll dropdown list when turning the mouse wheel
+    if (document.getElementById("selMonth")) {
+      document.getElementById("selMonth").addEventListener("wheel", changeDropdownList, { passive: false });
+      document.getElementById("selYear").addEventListener("wheel", changeDropdownList, { passive: false });
     }
 
-    // Formular senden
-    if (document.getElementById("absenden")) {
-      document.getElementById("absenden").addEventListener("click", () => {
-        // Formular (Pflichtfelder) überprüfen
+    // Send form
+    if (document.getElementById("submit")) {
+      document.getElementById("submit").addEventListener("click", () => {
+        // Check form (required fields)
         if (document.getElementById("form").reportValidity()) {
-          // Formular absenden
-          fetch(`${kalender}`, {
+          // Submit form
+          fetch(`${calendar}`, {
             method: "POST",
             body: new FormData(document.getElementById("form")),
           })
-            .then((antwort) => {
-              return antwort.text();
+            .then((response) => {
+              return response.text();
             })
-            .then((antwort) => {
-              ausgabe(antwort);
+            .then((response) => {
+              output(response);
             });
         }
       });
@@ -193,97 +193,97 @@ const ausgabe = (antwort) => {
   }
 };
 
-// Tastaturanweisungen
+// Keyboard instructions
 // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent
 // https://omatsuri.app/events-keycode
-const tastaturAnweisungen = (e) => {
-  // Tastaturanweisungen bei Formularen verhindern
+const keyboardInstructions = (e) => {
+  // Prevent keyboard instructions for forms
   if (!document.getElementsByTagName("form")[0]) {
-    let monat = document.getElementById("monat").dataset.monat;
-    let jahr = document.getElementById("jahr").dataset.jahr;
+    let month = document.getElementById("month").dataset.month;
+    let year = document.getElementById("year").dataset.year;
 
-    // [STRG] + [Pfeil Rechts] Einen Monat weiter
+    // [CTRL] + [Arrow Right] One month forward
     if (e.getModifierState("Control") && e.code === "ArrowRight") {
-      document.getElementById("monatPlus").click();
+      document.getElementById("monthPlus").click();
     }
 
-    // [STRG] + [Pfeil Links] Einen Monat zurück
+    // [CTRL] + [Arrow Left] One month back
     if (e.getModifierState("Control") && e.code === "ArrowLeft") {
-      document.getElementById("monatMinus").click();
+      document.getElementById("monthMinus").click();
     }
 
-    // [STRG] + [Pfeil Auf] Ein Jahr weiter
+    // [CTRL] + [Arrow Up] One year forward
     if (e.getModifierState("Control") && e.code === "ArrowUp") {
       e.preventDefault();
-      document.getElementById("jahrPlus").click();
+      document.getElementById("yearPlus").click();
     }
 
-    // [STRG] + [Pfeil Ab] Ein Jahr zurück
+    // [CTRL] + [Arrow Down] One year back
     if (e.getModifierState("Control") && e.code === "ArrowDown") {
       e.preventDefault();
-      document.getElementById("jahrMinus").click();
+      document.getElementById("yearMinus").click();
     }
 
-    // [A] Anmeldung/Abmeldung
+    // [A] Login/Logout
     if (e.code === "KeyA") {
-      zeigeFormular("anmeldung", 1, monat, jahr);
+      showForm("login", 1, month, year);
     }
 
-    // [D] Drucken
+    // [D] Print
     if (e.code === "KeyD") {
       self.print();
     }
 
-    // [K] Kalender auswählen
+    // [K] Select calendar
     if (e.code === "KeyK") {
-      zeigeFormular("calendar", 1, monat, jahr);
+      showForm("calendar", 1, month, year);
     }
 
-    // [N] Neuen Event eintragen
+    // [N] Add new event
     if (e.code === "KeyN") {
-      document.getElementById("log").textContent == "Abmelden"
-        ? zeigeFormular("eintragen", heute.getDate(), heute.getMonth(), heute.getFullYear())
-        : zeigeFormular("anmeldung", 1, monat, jahr);
+      document.getElementById("log").textContent == "Logout"
+        ? showForm("add", today.getDate(), today.getMonth(), today.getFullYear())
+        : showForm("login", 1, month, year);
     }
 
-    // [O] Zum Kalender scrollen
+    // [O] Scroll to calendar
     if (e.code === "KeyO") {
-      document.getElementById("kalender").scrollIntoView({
+      document.getElementById("zenk-calendar").scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
     }
 
-    // [W] Wochennummern anzeigen
+    // [W] Show week numbers
     if (e.code === "KeyW") {
-      zeigeWochennummern();
+      showWeekNumbers();
     }
 
-    // [X] Aktueller Kalender
+    // [X] Current calendar
     if (e.code === "KeyX") {
-      zeigeKalender(heute.getFullYear(), heute.getMonth() + 1);
+      showCalendar(today.getFullYear(), today.getMonth() + 1);
     }
   }
 
-  // [ESC] Anzeige schließen
+  // [ESC] Close display
   if (e.code === "Escape") {
-    if (document.getElementById("anzeige")) {
-      document.getElementById("anzeige").remove();
-      aktivEvent();
+    if (document.getElementById("display")) {
+      document.getElementById("display").remove();
+      activeEvent();
     }
   }
 };
 
-// Wochennummern anzeigen
-const zeigeWochennummern = () => {
-  let wochen = document.querySelectorAll(".woche");
-  wochen.forEach((woche) => {
-    woche.classList.toggle("zeigeWoche");
+// Show week numbers
+const showWeekNumbers = () => {
+  let weeks = document.querySelectorAll(".week");
+  weeks.forEach((week) => {
+    week.classList.toggle("showWeek");
   });
 };
 
-// Die Auswahlliste beim drehen mit dem Mausrad verändern
-const auswahllisteAendern = (e) => {
+// Change the dropdown list when turning the mouse wheel
+const changeDropdownList = (e) => {
   e.preventDefault();
   let id = e.target.id;
   let va = Math.floor(e.deltaY);
@@ -296,32 +296,32 @@ const auswahllisteAendern = (e) => {
   document.getElementById(id).selectedIndex = si;
 };
 
-// Aktiver Event
-const aktivEvent = (id = 0) => {
-  if (document.getElementsByClassName("aktivevent")[0]) {
-    document.getElementsByClassName("aktivevent")[0].classList.remove("aktivevent");
+// Active event
+const activeEvent = (id = 0) => {
+  if (document.getElementsByClassName("active-event")[0]) {
+    document.getElementsByClassName("active-event")[0].classList.remove("active-event");
   }
   if (id != 0) {
-    document.querySelector(`[data-event="${id}"]`).classList.add("aktivevent");
+    document.querySelector(`[data-event="${id}"]`).classList.add("active-event");
   }
 };
 
-// Fenster zentriert anzeigen
-const fensterPosition = () => {
+// Show window centered
+const windowPosition = () => {
   var form = document.getElementById("form");
-  var tabelle = document.getElementById("tabelle");
+  var table = document.getElementById("table");
   if (form) {
-    let breite = form.offsetWidth / 2 - 8;
-    let links = tabelle.offsetWidth / 2 - breite;
-    let hoehe = form.offsetHeight / 3;
-    let oben = tabelle.offsetTop + hoehe / 2;
-    form.style = `left: ${links}px; top: ${oben}px;`;
+    let width = form.offsetWidth / 2 - 8;
+    let left = table.offsetWidth / 2 - width;
+    let height = form.offsetHeight / 3;
+    let top = table.offsetTop + height / 2;
+    form.style = `left: ${left}px; top: ${top}px;`;
   }
 };
 
-// Fenster bewegen
+// Move window
 // https://blog.pliszko.com/2021-04-10-draggable-elements-in-javascript-without-external-libraries/
-const fensterBewegen = (elementSelector, handleSelector) => {
+const moveWindow = (elementSelector, handleSelector) => {
   const elements = document.querySelectorAll(elementSelector);
 
   const getCursorPositionFromEvent = (e) => {
@@ -350,7 +350,7 @@ const fensterBewegen = (elementSelector, handleSelector) => {
     const start = (e) => {
       e.preventDefault();
 
-      // Cursorposition abrufen
+      // Get cursor position
       const cursorPosition = getCursorPositionFromEvent(e);
       cursorPositionX = cursorPosition.x;
       cursorPositionY = cursorPosition.y;
@@ -364,18 +364,18 @@ const fensterBewegen = (elementSelector, handleSelector) => {
     };
 
     const dragging = (e) => {
-      // Hole die neue Cursorposition
+      // Get new cursor position
       const cursorPosition = getCursorPositionFromEvent(e);
 
-      // Positionsänderung berechnen
+      // Calculate position change
       const positionChangeX = cursorPositionX - cursorPosition.x;
       const positionChangeY = cursorPositionY - cursorPosition.y;
 
-      // Speichere die Cursorposition
+      // Save cursor position
       cursorPositionX = cursorPosition.x;
       cursorPositionY = cursorPosition.y;
 
-      // Festlegen der neuen Position des Elements
+      // Set new position of the element
       element.style = `left: ${element.offsetLeft - positionChangeX}px;
        top: ${element.offsetTop - positionChangeY}px`;
     };

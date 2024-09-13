@@ -7,19 +7,39 @@ This is a Fork from Werner Zenks webcalendar. You can obtain a copy of the origi
 * ***Which browsers are supported?*** Chrome, Firefox, LibreWolf, Opera, Opera GX, Edge, Chromium, Brave, Vivaldi, and Safari.
 
 ## Install
-copy to your www dir and insert a div with the "kalender" keyword id
+Copy calendar.php, webcalendar.js and webcalendar.css to your www dir and insert a div with the "kalender" keyword id into your html. Update file permissions as needed and have a look at the paths to point to the stylesheet and the javascript. Do not forget the location of the calendar.php. Its location has to be updated in webcalendar.js on the first lines...
+
 ```
-<div id="kalender" style="height: auto;"></div>
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Event-Calendar (SQLite)</title>
+    <link rel="stylesheet" href="webcalendar.css" />
+    <script src="webcalendar.js" defer></script>
+    <style>
+      /* Only for this Demo! */
+      body {
+        margin: 3rem 1rem 68rem 0.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="kalender" style="max-width:800px;"><noscript>This Webcalendar needs JavaScript enabled!</noscript></div>
+  </body>
+</html>
 ```
 
 ## Screenshots
-Default "light" layout: <br>
+Default "light" layout:<br>
 <img src="docs/Clipboard01.jpg" width="800px">
 
-Summary of appointment: <br>
+Summary of appointment:<br>
 <img src="docs/Clipboard02.jpg" width="800px">
 
-Login for administrator: <br>
+Login for administrator:<br>
 <img src="docs/Clipboard03.jpg" width="800px">
 
 Create a new event:<br>

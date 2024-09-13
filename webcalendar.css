@@ -1,8 +1,8 @@
-/* *  Event-Kalender (SQLite) - style.css (utf-8)
- * von Werner Zenk
- * editiert von Tommy */
+/* *  Event Calendar (SQLite) - style.css (utf-8)
+ * by Werner Zenk
+ * edited by Tommy */
 
-/* Globale Styles */
+/* Global Styles */
 
 :root {
   --font-family: Dimbo, sans-serif;
@@ -16,15 +16,15 @@
   color-scheme: light dark;
 }
 
-/* Kalender */
+/* Calendar */
 
-div#kalender {
+div#calendar {
   min-height: 325px;
 }
 
-/* Tabelle */
+/* Table */
 
-table#tabelle {
+table#table {
   font-family: var(--font-family);
   font-size: clamp(0.9rem, 1vw, 1.1rem);
   table-layout: auto;
@@ -37,19 +37,19 @@ table#tabelle {
   user-select: none;
 }
 
-/* Tabelle (nth-child even/odd) */
+/* Table (nth-child even/odd) */
 
-table#tabelle th:nth-child(even), table#tabelle td:nth-child(even) {
+table#table th:nth-child(even), table#table td:nth-child(even) {
   background-color: var(--bgcolor-even);
 }
 
-table#tabelle th:nth-child(odd), table#tabelle td:nth-child(odd) {
+table#table th:nth-child(odd), table#table td:nth-child(odd) {
   background-color: var(--bgcolor-odd);
 }
 
-/* th (Wochentage) */
+/* th (Weekdays) */
 
-table#tabelle th.spalten {
+table#table th.columns {
   font-weight: normal;
   text-align: center;
   width: 14.285714%;
@@ -59,13 +59,13 @@ table#tabelle th.spalten {
   z-index: 50;
 }
 
-table#tabelle th.spalten:hover {
+table#table th.columns:hover {
   color: var(--highlight-color);
 }
 
-/* Woche */
+/* Week */
 
-table#tabelle th.spalte {
+table#table th.column {
   font-weight: normal;
   text-align: center;
   box-shadow: inset 0px -0.5px rgb(190, 190, 190);
@@ -74,47 +74,47 @@ table#tabelle th.spalte {
   z-index: 50;
 }
 
-/* Ein Tag */
+/* One Day */
 
-table#tabelle td.eintag {
+table#table td.one-day {
   vertical-align: top;
   height: 65px;
 }
 
-table#tabelle td.eintag:hover {
+table#table td.one-day:hover {
   color: var(--highlight-color);
 }
 
-/* Kein Tag */
+/* No Day */
 
-table#tabelle td.keintag {
+table#table td.no-day {
   color: rgba(184, 184, 184, 0.5);
   vertical-align: top;
 }
 
-/* Heute */
+/* Today */
 
-table#tabelle td.heute {
+table#table td.today {
   box-shadow: inset 0px 0px 4px var(--highlight-color);
   border-radius: 2px;
 }
 
-/* Woche */
+/* Week */
 
-table#tabelle th.woche {
+table#table th.week {
   font-weight: normal;
   text-align: center;
   vertical-align: middle;
   padding: 0px 5px 0px 5px;
 }
 
-table#tabelle th.woche:hover {
+table#table th.week:hover {
   color: var(--highlight-color);
 }
 
 /* Navigation */
 
-table#tabelle th#navigation {
+table#table th#navigation {
   font-size: 26px;
   text-align: center;
   white-space: nowrap;
@@ -124,20 +124,20 @@ table#tabelle th#navigation {
   z-index: 100;
 }
 
-/* Menue */
+/* Menu */
 
-table#tabelle td#menue {
+table#table td#menu {
   text-align: right;
   background-image: linear-gradient(var(--bgcolor-odd), var(--bgcolor-scheme));
 }
 
-/* Tabellenzeile hervorheben */
+/* Highlight table row */
 
-table#tabelle > tbody > tr {
+table#table > tbody > tr {
   transition: background-color 0.3s;
 }
 
-table#tabelle > tbody > tr:hover {
+table#table > tbody > tr:hover {
   background-color: var(--highlight-color);
 }
 
@@ -148,7 +148,7 @@ a:link.link, a:visited.link {
   word-break: break-all;
 }
 
-/* Funktionsaufrufe */
+/* Function calls */
 
 .navLink {
   display: inline-block;
@@ -163,33 +163,33 @@ a:link.link, a:visited.link {
   cursor: pointer;
 }
 
-/* Fenster schließen */
+/* Close window */
 
-div#titelleiste > .navLink {
+div#title-bar > .navLink {
   padding: 5px 8px 5px 8px;
 }
 
-div#titelleiste > .navLink:hover {
+div#title-bar > .navLink:hover {
   color: rgb(255, 255, 255);
   background-color: rgb(232, 17, 35);
   border-top-right-radius: 5px;
   outline: 0px;
 }
 
-/* Tage außerhalb des aktuellen Monats */
+/* Days outside the current month */
 
-div.keineAuswahl {
+div.no-selection {
   padding: 1px 8px 1px 8px;
 }
 
-/* Abmelden Markierung */
+/* Logout highlight */
 
-span.abmelden {
+span.logout {
   text-decoration: underline solid 0.5px currentColor;
   text-underline-offset: 2px;
 }
 
-/* Fenster */
+/* Window */
 
 form#form {
   font-family: var(--font-family);
@@ -205,9 +205,9 @@ form#form {
   user-select: none;
 }
 
-/* Titelleiste */
+/* Title bar */
 
-div#titelleiste {
+div#title-bar {
   font-family: var(--font-family);
   font-size: 26px;
   color: rgb(140,198,63);
@@ -226,25 +226,25 @@ div#titelleiste {
   min-width: 220px;
 }
 
-/* Kalender-Icon */
+/* Calendar icon */
 
-div#titel::before {
+div#title::before {
   content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAR0lEQVR42mNggIGqM//BGB3gEideA0yAWGy/8PZ/UjDD7asP/xMLQGrhGpbP3QjHMIDsFMo1UMVJ6GKUaSDaSTAA4uDDMHUA2DOWmpNPH+AAAAAASUVORK5CYII=");
   padding-right: 5px;
 }
 
-/* Schließen Kreuz */
+/* Close cross */
 
-div#schliessen {
+div#close {
   font-size: 0.9rem;
   text-align: center;
   /*height: 20px;*/
   /*margin-top: -5px;*/
 }
 
-/* Ueberschrift */
+/* Headline */
 
-div#ueberschrift {
+div#headline {
   font-family: var(--font-family);
   font-size: clamp(1.2rem, 1.3vw, 1.4rem);
   font-variant: small-caps;
@@ -256,9 +256,9 @@ div#ueberschrift {
   cursor: text;
 }
 
-/* Beschreibung */
+/* Description */
 
-div#beschreibung {
+div#description {
   margin-bottom: 5px;
   -webkit-user-select: text;
   user-select: text;
@@ -268,9 +268,9 @@ div#beschreibung {
   hyphens: auto;
 }
 
-/* Formblock */
+/* Form block */
 
-div#formblock {
+div#form-block {
   padding: 10px;
   /*min-width: 330px;*/
   max-width: 650px;
@@ -281,9 +281,9 @@ div#formblock {
   max-height: 450px;
 }
 
-/* Zentrierter Absatz */
+/* Centered paragraph */
 
-p.absatz {
+p.paragraph {
   text-align: center;
 }
 
@@ -313,7 +313,7 @@ form div.event {
   cursor: text;
 }
 
-/* Bild, Video */
+/* Image, Video */
 
 figure :is(img, video) {
   display: block;
@@ -327,21 +327,21 @@ figure :is(img, video) {
   cursor: default;
 }
 
-/* Kein JavaScript! */
+/* No JavaScript! */
 
 noscript {
   color: rgb(255, 0, 0);
 }
 
-/* Mit JavaScript gesetzte CSS-Klassen */
+/* CSS classes set with JavaScript */
 
-.aktivevent {
+.active-event {
   box-shadow: 0px 0px 0px 3px var(--highlight-color);
   outline: solid 0.5px rgb(255 255 255);
   position: relative;
 }
 
-.zeigeWoche {
+.showWeek {
   display: none;
 }
 
@@ -374,18 +374,18 @@ span.tool:hover span.tip {
   outline: solid 1px currentColor;
 }
 
-/* Monatsbilder */
+/* Month images */
 
-div#monatsbild {
+div#month-image {
   height: 175px;
   background-size: cover !important;
   background-position: center center;
   box-shadow: inset 0px 0px 20px 0px rgba(170, 170, 170, 0.9);
   border-radius: 12px 12px 0 0;
-  animation: bewegeMonatsbild 25s 2s ease-in-out infinite alternate;
+  animation: moveMonthImage 25s 2s ease-in-out infinite alternate;
 }
 
-@keyframes bewegeMonatsbild {
+@keyframes moveMonthImage {
   from {
     background-position: top center;
   }
@@ -394,13 +394,13 @@ div#monatsbild {
   }
 }
 
-/* Fokusindikator */
+/* Focus indicator */
 
 :focus-visible {
   outline: solid 1.5px var(--highlight-color);
 }
 
-/* Textbereich */
+/* Text area */
 
 textarea {
   margin-top: 3px;
@@ -412,7 +412,7 @@ textarea {
   max-height: 450px;
 }
 
-/* Eingabefelder und Buttons */
+/* Input fields and buttons */
 
 input[type="text"], input[type="date"], input[type="password"], input[type="time"], input[type="checkbox"], button[type="button"], textarea, select {
   font-family: var(--font-family);
@@ -428,37 +428,37 @@ button[type="button"]:hover {
   border: solid 1px var(--highlight-color);
 }
 
-/* Akzentfarbe für Checkboxen */
+/* Accent color for checkboxes */
 
 input[type="checkbox"] {
   accent-color: var(--highlight-color);
 }
 
-/* Normale Checkboxen */
+/* Normal checkboxes */
 
 input[type="checkbox"]:checked + label {
   color: var(--highlight-color);
 }
 
-/* Checkbox zum kopieren */
+/* Checkbox for copying */
 
 input[type="checkbox"]:checked + label#copy {
   color: rgb(0, 172, 0);
 }
 
-/* Checkbox zum löschen */
+/* Checkbox for deleting */
 
 input[type="checkbox"]:checked + label#delete {
   color: rgb(238, 0, 0);
 }
 
-/* Eingabefeld Event */
+/* Input field for event */
 
-input[type="text"].eventfeld {
+input[type="text"].event-field {
   width: 83%;
 }
 
-/* Label (Transition-Effekt) */
+/* Label (transition effect) */
 
 label {
   transition: color 0.3s;
@@ -468,14 +468,14 @@ label:hover {
   color: var(--highlight-color);
 }
 
-/* Accesskey hervorheben */
+/* Highlight access key */
 
 label > u, summary > u, button > u {
   text-decoration: underline 1px var(--highlight-color);
   text-underline-offset: 1px;
 }
 
-/* Auswahlliste, abwechselnde Hintergrundfarbe */
+/* Dropdown list, alternating background color */
 
 option:nth-child(even) {
   background-color: var(--highlight-bgcolor);
@@ -491,7 +491,7 @@ summary:hover {
   color: var(--highlight-color);
 }
 
-/* Summary Pfeil-Symbol */
+/* Summary arrow symbol */
 
 summary::marker {
   color: var(--highlight-color);
@@ -500,30 +500,30 @@ summary::marker {
 /* Media Screen */
 
 @media screen and (max-width: 48rem) {
-  table#tabelle td.eintag {
+  table#table td.one-day {
     height: 45px;
   }
 }
 
 @media screen and (max-width: 48rem) {
-  table#tabelle, div#aktiv form {
+  table#table, div#active form {
     font-size: 0.8rem;
   }
 }
 
-/* EDIT Tommy word-spacing auf 0 und font-size kleiner für Smartphone */
+/* EDIT Tommy word-spacing to 0 and font-size smaller for smartphone */
 
 @media screen and (max-width: 48rem) {
-  table#tabelle th#navigation {
+  table#table th#navigation {
     word-spacing: 0px;
     font-size: 1.0rem;
   }
 }
 
-/* Name des Wochentages kürzen */
+/* Shorten the name of the weekday */
 
 @media screen and (max-width: 48rem) {
-  span.abbrWochentag {
+  span.abbrWeekday {
     display: none;
   }
 }
@@ -536,7 +536,7 @@ summary::marker {
 }
 
 @media screen and (min-width: 90rem) {
-  table#tabelle td.eintag {
+  table#table td.one-day {
     height: 85px;
   }
 }
@@ -548,7 +548,7 @@ summary::marker {
 }
 
 @media screen and (min-width: 134rem) {
-  table#tabelle td.eintag {
+  table#table td.one-day {
     height: 115px;
   }
 }
@@ -572,16 +572,16 @@ summary::marker {
   }
 }
 
-/* Heute */
+/* Today */
 
 @media (prefers-color-scheme: dark) {
-  table#tabelle td.heute {
+  table#table td.today {
     box-shadow: inset 0px 0px 12px var(--highlight-color);
     border-radius: 2px;
   }
 }
 
-/* Auswahlliste, abwechselnde Hintergrundfarbe */
+/* Dropdown list, alternating background color */
 
 @media (prefers-color-scheme: dark) {
   option:nth-child(even) {
@@ -589,44 +589,43 @@ summary::marker {
   }
 }
 
-/* Tag hervorheben 
-td[data-tag="05.07.2022"],
-td[data-tag="25.07.2022"] {
+/* Highlight specific day 
+td[data-day="05.07.2022"],
+td[data-day="25.07.2022"] {
   background-color: #c6e3fd !important;
 } */
 
-/* Tag mit einem Bild hervorheben 
-td[data-tag="07.07.2022"] {
+/* Highlight day with an image 
+td[data-day="07.07.2022"] {
   background-image: url("img/event.png");
   background-size: cover;
 } */
 
-/* Jeden zweiten Tag hervorheben
+/* Highlight every other day
 td:nth-child(2n+1) {
   background-color: #dbf5fd !important;
 } */
 
-/* Tag mit einem Farbverlauf (Querstreifen) hervorheben 
-td[data-tag="04.07.2022"] {
+/* Highlight day with a gradient (stripes) 
+td[data-day="04.07.2022"] {
   background-image: repeating-linear-gradient(45deg, Lightsteelblue, Lightsteelblue 5px, White 5px, White 10px);
 } */
 
-/* Wochentag hervorheben 
-td[data-wochentag="Samstag"],
-td[data-wochentag="Sonntag"] {
+/* Highlight weekday 
+td[data-weekday="Saturday"],
+td[data-weekday="Sunday"] {
   background-color: #ffcece !important;
 } */
 
-/* Name des Wochentags hervorheben 
-th.Dienstag,
-th.Donnerstag,
-th.Samstag {
+/* Highlight name of the weekday 
+th.Tuesday,
+th.Thursday,
+th.Saturday {
   background-color: #85ddf8 !important;
 } */
 
-/* Woche hervorheben 
-tr[data-woche="1"],
-tr[data-woche="29"] {
+/* Highlight week 
+tr[data-week="1"],
+tr[data-week="29"] {
   outline: Solid 2px #11d100;
 } */
-
