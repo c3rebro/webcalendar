@@ -17,6 +17,9 @@ $EMAIL = "";
  * Program-specific settings
  */
 
+// Language. 'de' or 'en'
+$lang = 'de';
+
 // Session configuration statement
 session_start();
 
@@ -40,19 +43,19 @@ if (!file_exists($database)) {
 
     $db = new PDO('sqlite:' . $database);
     $db->exec("CREATE TABLE `calendar`(
-  id INTEGER PRIMARY KEY,
-  groupid INTEGER,
-  event TEXT,
-  description TEXT,
-  color TEXT,
-  private INTEGER,
-  holiday INTEGER,
-  notification INTEGER,
-  date_today TEXT,
-  date_begin TEXT,
-  date_end TEXT,
-  time_begin TEXT,
-  time_end TEXT)");
+    id INTEGER PRIMARY KEY,
+    groupid INTEGER,
+    event TEXT,
+    description TEXT,
+    color TEXT,
+    private INTEGER,
+    holiday INTEGER,
+    notification INTEGER,
+    date_today TEXT,
+    date_begin TEXT,
+    date_end TEXT,
+    time_begin TEXT,
+    time_end TEXT)");
 } else {
 
     // Establish connection
@@ -65,23 +68,21 @@ define("USER", (isset($_SESSION["name"])) ? true : false);
 // SQL - Show private events
 define("USER_PRIVATE", (USER) ? ' AND `private` >= 0 ' : ' AND `private` = 0 ');
 
-// Months
-define("MONTHS", [
-    1 => 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
-]);
-
-// Weekdays
-define("WEEKDAYS", [
-    1 => 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
-]);
+// Languagefile to use
+$langFileName = 'locale/' . $lang . '.php';
+if (!file_exists($langFileName)) {
+    include('locale/en.php');
+} else {
+    include('locale/' . $lang . '.php');
+}
 
 // Form
 define(
         "FORM",
         '<form id="form" accept-charset="utf-8" autocomplete="on" spellcheck="true">
  <div id="title-bar">
-  <div id="title">Appointment Calendar</div>
-  <div id="close" class="navLink" title="Close&#10;Key: ESC">&#10761;</div>
+  <div id="title">' . formTitleBarHeader . '</div>
+  <div id="close" class="navLink" title="' . navLinkHeaderClose . '&#10;' . navLinkHeaderHotkey . ': ESC">&#10761;</div>
  </div>' . PHP_EOL . '
  <div id="form-block">'
 );
@@ -91,13 +92,13 @@ define("FORM_", PHP_EOL . '</div>' . PHP_EOL . '</form>');
 // BBCode - Info
 define(
         "BBCODE",
-        '<span class="tool">?<span class="tip">Use BBCodes:<br>
-    [b]Bold[/b]&emsp; [i]Italic[/i]&emsp; [q]Quote[/q]<br>
-    [u]Underlined[/u]&emsp; [s]Strikethrough[/s]<br>
-    [c=red]Color[/c]&emsp; [bc=blue]Background[/bc]<br>
-    [g=image.jpg][/g]&emsp; [z]Centered[/z]<br>
+        '<span class="tool">?<span class="tip">' . tooltipBBCodesHeader . ':<br>
+    [b]' . tooltipBBCodesBold . '[/b]&emsp; [i]' . tooltipBBCodesItalic . '[/i]&emsp; [q]' . tooltipBBCodesQuote . '[/q]<br>
+    [u]' . tooltipBBCodesUnderlined . '[/u]&emsp; [s]' . tooltipBBCodesStrikethrough . '[/s]<br>
+    [c=red]' . tooltipBBCodesColor . '[/c]&emsp; [bc=blue]' . tooltipBBCodesBackground . '[/bc]<br>
+    [g=image.jpg][/g]&emsp; [z]' . tooltipBBCodesCentered . '[/z]<br>
     [a=audio.mp3][/a]&emsp; [v=video.mp4][/v]<br>
-    URL and line breaks will be formatted.</span></span>'
+    ' . tooltipBBCodesURLFormatted . '</span></span>'
 );
 
 // Color palette (for Chromium based browsers)
@@ -151,10 +152,10 @@ if (isset($_GET["calendar"])) {
             $dateToShow = customDate($dbDay, $dbMonth, $dbYear);
             $end_date = customDate($dbDayEnd, $dbMonthEnd, $dbYearEnd);
 
-            $time = ($dbTimeBegin == '00:00') ? '' : $dbTimeBegin . ' ' . $dbTimeEnd;
+            $time = ($dbTimeBegin == '00:00') ? '' : $dbTimeBegin . ' ' . $dbTimeEnd . '<br>';
 
             // HTML title attribute
-            $ttime = !empty($time) ? ' - ' . $time . 'Time' : $time;
+            $ttime = !empty($time) ? ' - ' . $time . ''.labelHeaderTime.'' : $time;
             $options = ($event["private"] == 1 ? '| Private ' : '') . ($event["holiday"] == 1 ? '| Holiday ' : '') . ($event["notification"] == 1 ? '| Notification ' : '');
             $title = 'title="' . $dateToShow . $ttime . (!empty($options) ? ' ' . $options : '') . '&#10;' . " " . $event["event"] .
                     (!empty($event["description"]) ? '&#10;' . stripBBCode($event["description"]) : '') . '"';
@@ -163,7 +164,7 @@ if (isset($_GET["calendar"])) {
             $textColor = blackOrWhite($event["color"]);
 
             // Add events to the array
-            $button = '<button type="button" class="event" data-event="' . $event["id"] . '" data-color="' . $event["color"] . '|' . $textColor . '" ' . $title . '>' . $time . '<br>' . htmlspecialchars($event["event"]) . '</button>';
+            $button = '<button type="button" class="event" data-event="' . $event["id"] . '" data-color="' . $event["color"] . '|' . $textColor . '" ' . $title . '>' . $time . htmlspecialchars($event["event"]) . '</button>';
             isset($data[$dbDay]) ? $data[$dbDay] .= $button : $data[$dbDay] = $button;
         }
 
@@ -175,21 +176,22 @@ if (isset($_GET["calendar"])) {
         $monthImage = '<!-- <div id="month-image" data-image-name="img/' . $month . '.png"></div> -->' . PHP_EOL;
 
         // Navigation
-        $table = $monthImage . '<table id="table">
-    <thead>
-    <tr>
-    <th colspan="8" id="navigation">
-    <span class="navLink" id="monthMinus" title="Go back one month&#10;CTRL + Left Arrow">&#10092;</span>
-    <span class="navLink" id="month" data-month="' . $month . '" title="Month: ' . MONTHS[$month] . '&#10;Select calendar&#10;Key: K">' . MONTHS[$month] . '</span>
-    <span class="navLink" id="monthPlus" title="Go forward one month&#10;CTRL + Right Arrow">&#10093;</span>
-    <span class="navLink" id="calendarCurrent" title="Current calendar&#10;Key: X">&#9711;</span>
-    <span class="navLink" id="yearMinus" title="Go back one year&#10;CTRL + Down Arrow">&#10092;</span>
-    <span class="navLink" id="year" data-year="' . $year . '" title="Year: ' . $year . '&#10;Select calendar&#10;Key: K">' . $year . '</span>
-    <span class="navLink" id="yearPlus" title="Go forward one year&#10;CTRL + Up Arrow">&#10093;</span>
-    </th>
-    </tr>
-    <tr>
-    <th class="week column" title="Week&#10;Key: W">W</th>' . PHP_EOL;
+        $table = $monthImage .
+                '<table id="table">
+                <thead>
+                <tr>
+                <th colspan="8" id="navigation">
+                <span class="navLink" id="monthMinus" title="' . navLinkHeaderNavigationGoback . '&#10;' . navLinkHeaderCtrl . ' + ' . navLinkHeaderLeftarrow . '">&#10092;</span>
+                <span class="navLink" id="month" data-month="' . $month . '" title="' . navLinkHeaderNavigationMonth . ': ' . MONTHS[$month] . '&#10;' . navLinkHeaderNavigationSelectMonth . '&#10;' . navLinkHeaderHotkey . ': K">' . MONTHS[$month] . '</span>
+                <span class="navLink" id="monthPlus" title="' . navLinkHeaderNavigationGofwd . '&#10;' . navLinkHeaderCtrl . ' + ' . navLinkHeaderRightarrow . '">&#10093;</span>
+                <span class="navLink" id="calendarCurrent" title="' . navLinkHeaderNavigationCurrentCalendar . '&#10;' . navLinkHeaderCtrl . ': X">&#9711;</span>
+                <span class="navLink" id="yearMinus" title="' . navLinkHeaderNavigationGobackYear . '&#10;' . navLinkHeaderCtrl . ' + ' . navLinkHeaderDownarrow . '">&#10092;</span>
+                <span class="navLink" id="year" data-year="' . $year . '" title="' . navLinkHeaderNavigationYear . ': ' . $year . '&#10;' . navLinkHeaderNavigationSelectYear . '&#10;Key: K">' . $year . '</span>
+                <span class="navLink" id="yearPlus" title="' . navLinkHeaderNavigationGofwdYear . '&#10;' . navLinkHeaderCtrl . ' + ' . navLinkHeaderUparrow . '">&#10093;</span>
+                </th>
+                </tr>
+                <tr>
+                <th class="week column" title="' . tableColumnHeaderWeek . '&#10;' . navLinkHeaderHotkey . ': W">W</th>' . PHP_EOL;
 
         // Weekdays
         foreach (WEEKDAYS as $weekday) {
@@ -198,8 +200,8 @@ if (isset($_GET["calendar"])) {
         }
 
         $table .= ' </tr>
-    </thead>
-    <tbody>';
+                </thead>
+                <tbody>';
 
         // Length of the current month
         $monthLength = date_format($selected, "t");
@@ -213,7 +215,7 @@ if (isset($_GET["calendar"])) {
 
         // First week in the month
         $week = week('1', $month, $year);
-        $table .= PHP_EOL . ' <tr data-week="' . $week . '">' . PHP_EOL . '  <th class="week" title="Week ' . $week . '">' . $week . '</th>';
+        $table .= PHP_EOL . ' <tr data-week="' . $week . '">' . PHP_EOL . '  <th class="week" title="' . tableColumnHeaderWeek . ' ' . $week . '">' . $week . '</th>';
 
         // Calendar days of the previous month
         for ($i = 1; $i < $firstWeekday; $i++) {
@@ -226,11 +228,11 @@ if (isset($_GET["calendar"])) {
 
             // HTML title attribute
             $title = customDate($day, $month, $year) .
-                    '&#10;Week: ' . week($day, $month, $year) .
-                    ' | Quarter: ' . quarter($month);
+                    '&#10;' . tableColumnHeaderWeek . ': ' . week($day, $month, $year) .
+                    ' | ' . tableColumnHeaderQuarter . ': ' . quarter($month);
 
             // Today - CSS marking
-            $today = (sprintf("%s%02s%02s", $year, $month, $day) == date_format($current, "Ymd") ? ' today' : '');
+            $today = (sprintf("%s-%02s-%02s", $year, $month, $day) == date_format($current, "Ymd") ? ' today' : '');
 
             // Add calendar day
             $weekday = weekday($day, $month, $year);
@@ -248,7 +250,7 @@ if (isset($_GET["calendar"])) {
             if ($rest == 0) {
                 if ($day <= ($monthLength - 1)) {
                     $week = week($day + 1, $month, $year);
-                    $table .= PHP_EOL . ' </tr>' . PHP_EOL . ' <tr data-week="' . $week . '">' . PHP_EOL . ' <th class="week"><span title="Week ' . $week . '">' . $week . '</span></th>';
+                    $table .= PHP_EOL . ' </tr>' . PHP_EOL . ' <tr data-week="' . $week . '">' . PHP_EOL . ' <th class="week"><span title="' . tableColumnHeaderWeek . ' ' . $week . '">' . $week . '</span></th>';
                 }
             }
         }
@@ -262,22 +264,22 @@ if (isset($_GET["calendar"])) {
 
         // Menu
         $login = (USER) ?
-                '<span id="log" class="navLink logout" title="Log out from Event Calendar&#10;Key: A">Logout</span>' :
-                '<span id="log" class="navLink" title="Log in to Event Calendar&#10;Key: A">Login</span>';
+                '<span id="log" class="navLink logout" title="' . navLinkHeaderFooterTooltipLogout . '&#10;' . navLinkHeaderHotkey . ': A">' . navLinkHeaderFooterLogout . '</span>' :
+                '<span id="log" class="navLink" title="' . navLinkHeaderFooterTooltipLogin . '&#10;' . navLinkHeaderHotkey . ': A">' . navLinkHeaderFooterLogin . '</span>';
 
-        $table .= PHP_EOL . '  </tr>
-</tbody>
-<tfoot>
-  <tr>
-   <td colspan="8" id="menu">
-   <span id="showWeekNrSelect" class="navLink" title="Show week numbers&#10;Key: W">Week</span> |
-   <span id="calendarSelect" class="navLink" title="Select calendar&#10;Key: K">Calendar</span> |
-  ' . $login . '
-   </td>
- </tr>
-</tfoot>
-</table>';
-
+        $table .= PHP_EOL .
+                '  </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                       <td colspan="8" id="menu">
+                       <span id="showWeekNrSelect" class="navLink" title="' . navLinkHeaderFooterTooltipShowWeekNr . '&#10;' . navLinkHeaderHotkey . ': W">' . navLinkHeaderFooterShowWeekNr . '</span> |
+                       <span id="calendarSelect" class="navLink" title="' . navLinkHeaderFooterTooltipCalendarSelect . '&#10;' . navLinkHeaderHotkey . ': K">' . navLinkHeaderFooterCalendarSelect . '</span> |
+                      ' . $login . '
+                       </td>
+                     </tr>
+                    </tfoot>
+                    </table>';
         echo $table;
     }
 }
@@ -289,57 +291,56 @@ if (isset($_GET["calendar"])) {
 // Add entry
 if (isset($_GET["add"]) && USER) {
     echo FORM . '
-  <div id="headline">Add Event</div>
+        
+        <div id="headline">' . formHeaderAddEvent . '</div>
 
-  <p>
-   <label title="Event (Required)&#10;Access key: E"><u>E</u>vent:
-   <input type="text" name="event" maxlength="50" placeholder="Enter event" accesskey="e" class="event-field" required autofocus></label>
-  </p>
+        <p>
+         <label title="' . formLabelTooltipEventname . '&#10;' . navLinkHeaderHotkey . ': E">' . formLabelEventname . ':
+         <input type="text" name="event" maxlength="50" placeholder="' . formInputPlaceholderEventname . '" accesskey="e" class="event-field" required autofocus></label>
+        </p>
 
-  <p>
-   <label title="Start date (Required)&#10;Access key: D"><u>S</u>tart date: 
-   <input type="date" name="date_begin" value="' . $_GET["year"] . '-' . sprintf("%02s", $_GET["month"]) . '-' . sprintf("%02s", $_GET["day"]) . '"
-    min="0001-01-01" max="2500-01-01" accesskey="d" required></label>&emsp;
-   <label title="Time (Optional, must not be empty!)&#10;Set: &#34;00:00&#34; for an all-day event.&#10;Access key: U"><u>T</u>ime:
-   <input type="time" name="time_begin" value="00:00" accesskey="u" required></label>&emsp;
-  </p>
+        <p>
+         <label title="' . formLabelTooltipStartdate . '&#10;' . navLinkHeaderHotkey . ': D">' . formLabelStartdate . ': 
+         <input type="date" name="date_begin" value="' . $_GET["year"] . '-' . sprintf("%02s", $_GET["month"]) . '-' . sprintf("%02s", $_GET["day"]) . '"
+          min="0001-01-01" max="2500-01-01" accesskey="d" required></label>&emsp;
+         <label title="' . formLabelTooltipStarttime . '&#10;' . formLabelTooltip2Starttime . '&#10;' . navLinkHeaderHotkey . ': U">' . formLabelStarttime . ':
+         <input type="time" name="time_begin" value="00:00" accesskey="u" required></label>&emsp;
+        </p>
 
-  <p>
-   <label title="End date (Required)&#10;Access key: D"><u>E</u>nd date: 
-   <input type="date" name="date_end" value="' . $_GET["year"] . '-' . sprintf("%02s", $_GET["month"]) . '-' . sprintf("%02s", $_GET["day"]) . '"
-    min="0001-01-01" max="2500-01-01" accesskey="d" required></label>&emsp;
-   <label title="Time until (Optional, must not be empty!)&#10;Access key: S"> Time u<u>n</u>til:
-   <input type="time" name="time_end" value="00:00" accesskey="s" required></label>
-  </p>
-  
-<!--
-  <p>
-   <input type="checkbox" name="holiday" id="holiday" accesskey="t">
-   <label for="holiday" title="Recurring (Optional)&#10;A fixed day in the year for holidays, birthdays, etc.&#10;Access key: k">Recurri<u>n</u>g</label>
-  </p>
--->  
+        <p>
+         <label title="' . formLabelTooltipEnddate . '&#10;' . navLinkHeaderHotkey . ': D">' . formLabelEnddate . ': 
+         <input type="date" name="date_end" value="' . $_GET["year"] . '-' . sprintf("%02s", $_GET["month"]) . '-' . sprintf("%02s", $_GET["day"]) . '"
+          min="0001-01-01" max="2500-01-01" accesskey="d" required></label>&emsp;
+         <label title="' . formLabelTooltipEndtime . '&#10;' . navLinkHeaderHotkey . ': S">' . formLabelEndtime . ':
+         <input type="time" name="time_end" value="00:00" accesskey="s" required></label>
+        </p>
 
-  <p>
-   <label title="Color (Optional)&#10;Mark the event with a specific color.&#10;Access key: F"><u>C</u>olor:
-   <input type="color" name="color" value="#D5E8FB" list="colors" accesskey="f"></label>
-   ' . COLOR_PALETTE . '&nbsp;
-   <input type="checkbox" name="private" id="private" accesskey="p">
-   <label for="private" title="Private event (Optional)&#10;This event will only be shown after login.&#10;Access key: P"><u>P</u>rivate</label>&nbsp;
-   <input type="checkbox" name="notification" id="notification" accesskey="n">
-   <label for="notification" title="Notification (Optional)&#10;Send a notification via email.&#10;Access key: N"><u>N</u>otification</label>
-  </p>
+        <p>
+         <input type="checkbox" name="holiday" id="holiday" accesskey="t">
+         <label for="holiday" title="' . formLabelTooltipRecurring . '&#10;' . formLabelTooltip2Recurring . '&#10;' . navLinkHeaderHotkey . ': k">' . formLabelRecurring . '</label>
+        </p>
+         
+        <p>
+         <label title="'.formLabelTooltipColor.'&#10;'.formLabelTooltip2Color.'.&#10;' . navLinkHeaderHotkey . ': F">'.formLabelColor.':
+         <input type="color" name="color" value="#D5E8FB" list="colors" accesskey="f"></label>
+         ' . COLOR_PALETTE . '&nbsp;
+         <input type="checkbox" name="private" id="private" accesskey="p">
+         <label for="private" title="'.formLabelTooltipPrivate.'&#10;'.formLabelTooltip2Private.'&#10;' . navLinkHeaderHotkey . ': P">'.formLabelPrivate.'</label>&nbsp;
+         <input type="checkbox" name="notification" id="notification" accesskey="n">
+         <label for="notification" title="'.formLabelTooltipNotification.'&#10;'.formLabelTooltip2Notification.'&#10;' . navLinkHeaderHotkey . ': N">'.formLabelNotification.'</label>
+        </p>
 
-  <p>
-   <label for="description" title="Description (Optional)&#10;Access key: B"><u>D</u>escription:</label> 
-   ' . BBCODE . '<br>
-   <textarea name="description" id="description" placeholder="Description (Optional)" accesskey="b"></textarea>
-  </p>
+        <p>
+         <label for="description" title="'.formLabelTooltipDescription.'&#10;' . navLinkHeaderHotkey . ': B">'.formLabelDescription.':</label> 
+         ' . BBCODE . '<br>
+         <textarea name="description" id="description" placeholder="'.formLabelTooltipDescription.'" accesskey="b"></textarea>
+        </p>
 
-  <p class="paragraph">
-   <input type="hidden" name="action" value="add">
-   <button type="button" id="submit" accesskey="e" title="Add event&#10;Access key: E"><u>A</u>dd</button>
-  </p>
-  ' . FORM_;
+        <p class="paragraph">
+         <input type="hidden" name="action" value="add">
+         <button type="button" id="submit" accesskey="e" title="'.formLabelTooltipAddEvent.'&#10;' . navLinkHeaderHotkey . ': E">'.formLabelAddEvent.'</button>
+        </p>
+        ' . FORM_;
 }
 
 // Show / edit event
@@ -363,8 +364,8 @@ if (isset($_GET["edit"])) {
     $start_date = shortDate($dbDayBegin, $dbMonthBegin, $dbYearBegin);
     $end_date = shortDate($dbDayEnd, $dbMonthEnd, $dbYearEnd);
 
-    $start_time = $dbTimeBegin . ' Time';
-    $end_time = $dbTimeEnd . ' Time';
+    $start_time = $dbTimeBegin . ' '.labelHeaderTime.'';
+    $end_time = $dbTimeEnd . ' '.labelHeaderTime.'';
 
     //$end_time = ($event["time"] == '00:00') ? '' : ' - ' . $event["time"];
     //$time = ($dbTime != '00:00') ? '<br> ' . $dbTime . $end_time . ' Time' : '';
@@ -377,73 +378,117 @@ if (isset($_GET["edit"])) {
     $cxNotification = $event["notification"] == 1 ? ' checked' : '';
 
     echo FORM . '
-  <div id="headline">
-  ' . $start_date . ' - ' . $start_time . '<br> 
-  until<br> 
-  ' . $end_date . ' - ' . $end_time . '
-  </div>
+        <div id="headline">
+        ' . $start_date . ' - ' . $start_time . '<br> 
+        '.labelHeaderUntil.'<br> 
+        ' . $end_date . ' - ' . $end_time . '
+        </div>
 
-  <p>
-  <div id="event-text" class="event" data-color="' . $event["color"] . '|' . $textColor . '">' . $event["event"] . '</div>
-  </p>' .
+        <p>
+        <div id="event-text" class="event" data-color="' . $event["color"] . '|' . $textColor . '">' . $event["event"] . '</div>
+        </p>
+        <button id="export-ics" data-event-id="' . $event["id"] . '">Export to ICS</button>' .    
     (!empty($event["description"]) ? '<div id="description">' . textFormatting($event["description"]) . '</div>' : '');
 
-    // Edit event by the user
-    if (USER) {
+    // Edit event by the user if begin and end are equal. (series can only be edited without the start and enddate, one have to recreate them instead)
+    if (USER && ($end_date == $start_date)) {
 
-        echo '<details>
-  <summary accesskey="r" title="Edit event&#10;Access key: R">Edit <u>e</u>vent</summary>
+        echo '<details> <summary accesskey="r" title="'.formSummaryTooltipEditEvent.'&#10;'.navLinkHeaderHotkey.': R">'.formSummaryLabelEditEvent.'</summary>
 
-  <p>
-   <label title="Event (Required) - ID: ' . $event["id"] . '&#10;Access key: E"><u>E</u>vent:
-   <input type="text" name="event" value="' . $event["event"] . '" maxlength="50" placeholder="Enter event" class="event-field" accesskey="e" required></label>
-  </p>
+            <p>
+             <label title="'.formLabelTooltipEditSingleEvent.': ' . $event["id"] . '&#10;'.navLinkHeaderHotkey.': E">'.formLabelEditSingleEvent.':
+             <input type="text" name="event" value="' . $event["event"] . '" maxlength="50" placeholder="'.formInputPlaceholderEventname.'" class="event-field" accesskey="e" required></label>
+            </p>
 
-  <p>
-   <label title="Date (Required)&#10;Access key: D"><u>D</u>ate:
-   <input type="date" name="date_today" value="' . $dbYearToday . '-' . $dbMonthToday . '-' . $dbDayToday . '" min="0001-01-01" max="2500-01-01" accesskey="d" required></label>&emsp;
-   <input type="checkbox" name="holiday" id="holiday"' . $cxHoliday . ' accesskey="t">
-   <label for="holiday" title="Holiday (Optional)&#10;A fixed day in the year for holidays, birthdays, etc.&#10;Access key: T">Holida<u>y</u></label>
-  </p>
+            <p>
+             <label title="'.formLabelTooltipEditSingleEventDate.'&#10;Access key: D">'.formLabelEditSingleEventDate.':
+             <input type="date" name="date_today" value="' . $dbYearToday . '-' . $dbMonthToday . '-' . $dbDayToday . '" min="0001-01-01" max="2500-01-01" accesskey="d" required></label>&emsp;
+             <input type="checkbox" name="holiday" id="holiday"' . $cxHoliday . ' accesskey="t">
+             <label for="holiday" title="'.formLabelTooltipEditSingleEventRecurring.'&#10;'.formLabelTooltip2EditSingleEventRecurring.'&#10;Access key: T">'.formLabelEditSingleEventRecurring.'</label>
+            </p>
 
-  <p>
-   <label title="Time (Optional, must not be empty!)&#10;Set: &#34;00:00&#34; for an all-day event.&#10;Access key: U"><u>T</u>ime:
-   <input type="time" name="time_begin" value="' . $dbTimeBegin . '" accesskey="u" required></label>&emsp;
-   <label title="Time until (Optional, must not be empty!)&#10;Access key: S"> u<u>n</u>til:
-   <input type="time" name="time_end" value="' . $event["time_end"] . '" accesskey="s" required></label>
-  </p>
+            <p>
+             <label title="'.formLabelTooltipEditSingleEventStarttime.'&#10;'.formLabelTooltip2EditSingleEventStarttime.'&#10;'.navLinkHeaderHotkey.': U">'.formLabelEditSingleEventStarttime.':
+             <input type="time" name="time_begin" value="' . $dbTimeBegin . '" accesskey="u" required></label>&emsp;
+             <label title="'.formLabelTooltipEditSingleEventEndtime.'&#10;'.navLinkHeaderHotkey.': S">'.formLabelEditSingleEventEndtime.':
+             <input type="time" name="time_end" value="' . $event["time_end"] . '" accesskey="s" required></label>
+            </p>
 
-  <p>
-   <label title="Color (Optional)&#10;Mark the event with a specific color.&#10;Access key: F"><u>C</u>olor:
-   <input type="color" name="color" value="' . $event["color"] . '" list="colors" accesskey="f"></label>
-   ' . COLOR_PALETTE . '&nbsp;
-   <input type="checkbox" name="private" id="private"' . $cxPrivate . ' accesskey="p">
-   <label for="private" title="Private event (Optional)&#10;This event will only be shown after login.&#10;Access key: P"><u>P</u>rivate</label>&nbsp;
-   <input type="checkbox" name="notification" id="notification"' . $cxNotification . ' accesskey="n">
-   <label for="notification" title="Notification (Optional)&#10;Send a notification via email.&#10;Access key: N"><u>N</u>otification</label>
-  </p>
+            <p>
+             <label title="'.formLabelTooltipEditSingleEventColor.'&#10;'.formLabelTooltip2EditSingleEventColor.'&#10;'.navLinkHeaderHotkey.': F">'.formLabelEditSingleEventColor.':
+             <input type="color" name="color" value="' . $event["color"] . '" list="colors" accesskey="f"></label>
+             ' . COLOR_PALETTE . '&nbsp;
+             <input type="checkbox" name="private" id="private"' . $cxPrivate . ' accesskey="p">
+             <label for="private" title="'.formLabelTooltipEditSingleEventPrivate.'&#10;'.formLabelTooltip2EditSingleEventPrivate.'&#10;'.navLinkHeaderHotkey.': P">'.formLabelEditSingleEventPrivate.'</label>&nbsp;
+             <input type="checkbox" name="notification" id="notification"' . $cxNotification . ' accesskey="n">
+             <label for="notification" title="'.formLabelTooltipEditSingleEventNotification.'&#10;'.formLabelTooltip2EditSingleEventNotification.'&#10;'.navLinkHeaderHotkey.': N">'.formLabelEditSingleEventNotification.'</label>
+            </p>
 
-  <p>
-   <label for="description" title="Description (Optional)&#10;Access key: B"><u>D</u>escription:</label>
-  ' . BBCODE . '<br>
-   <textarea name="description" id="description" placeholder="Description (Optional)" accesskey="b">' . $event["description"] . '</textarea>
-  </p>
+            <p>
+             <label for="description" title="'.formLabelEditSingleEventTooltipDescription.'&#10;'.navLinkHeaderHotkey.': B">'.formLabelEditSingleEventDescription.':</label>
+            ' . BBCODE . '<br>
+             <textarea name="description" id="description" placeholder="'.formLabelEditSingleEventPlaceholderDescription.'" accesskey="b">' . $event["description"] . '</textarea>
+            </p>
 
-  <p>
-   <input type="checkbox" name="copy" id="copy" accesskey="k">
-   <label for="copy" id="copy" title="Copy event (Optional)&#10;Copy the event to the selected date.&#10;Access key: K">Copy e<u>v</u>ent</label> &emsp;
-   <input type="checkbox" name="delete" id="delete" accesskey="l">
-   <label for="delete" id="delete" title="Delete event (Optional)&#10;Deleting the event cannot be undone and requires confirmation.&#10;Access key: L">Delete e<u>v</u>ent</label>
-  </p>
+            <p>
+             <input type="checkbox" name="copy" id="copy" accesskey="k">
+             <label for="copy" id="copy" title="'.formLabelEditSingleEventTooltipCopy.'&#10;'.formLabelEditSingleEventTooltip2Copy.'&#10;'.navLinkHeaderHotkey.': K">'.formLabelEditSingleEventCopy.'</label> &emsp;
+             <input type="checkbox" name="delete" id="delete" accesskey="l">
+             <label for="delete" id="delete" title="'.formLabelEditSingleEventTooltipDelete.'&#10;'.formLabelEditSingleEventTooltip2Delete.'&#10;'.navLinkHeaderHotkey.': L">'.formLabelEditSingleEventDelete.'</label>
+            </p>
 
-  <p class="paragraph">
-   <input type="hidden" name="id" value="' . $_GET["id"] . '">
-   <input type="hidden" name="action" value="edit">
-   <button type="button" id="submit" accesskey="a" title="Apply changes&#10;Access key: A"><u>A</u>pply</button>
-  </p>
-  </details>';
+            <p class="paragraph">
+             <input type="hidden" name="id" value="' . $_GET["id"] . '">
+             <input type="hidden" name="action" value="edit">
+             <button type="button" id="submit" accesskey="a" title="'.formLabelEditSingleEventTooltipApplyChanges.'&#10;'.navLinkHeaderHotkey.'y: A">'.formLabelEditSingleEventApplyChanges.'</button>
+            </p>
+        </details>';
+    } else {
+        if (USER && ($end_date != $start_date)) {
+
+        echo '<details> <summary accesskey="r" title="'.formSummaryTooltipEditEvent.'&#10;'.navLinkHeaderHotkey.': R">'.formSummaryLabelEditEvent.'</summary>
+
+            <p>
+             <label title="'.formLabelTooltipEditSingleEvent.': ' . $event["id"] . '&#10;'.navLinkHeaderHotkey.': E">'.formLabelEditSingleEvent.':
+             <input type="text" name="event" value="' . $event["event"] . '" maxlength="50" placeholder="'.formInputPlaceholderEventname.'" class="event-field" accesskey="e" required></label>
+            </p>
+
+            <p>
+             <input type="checkbox" name="holiday" id="holiday"' . $cxHoliday . ' accesskey="t">
+             <label for="holiday" title="'.formLabelTooltipEditSingleEventRecurring.'&#10;'.formLabelTooltip2EditSingleEventRecurring.'&#10;Access key: T">'.formLabelEditSingleEventRecurring.'</label>
+            </p>
+
+            <p>
+             <label title="'.formLabelTooltipEditSingleEventColor.'&#10;'.formLabelTooltip2EditSingleEventColor.'&#10;'.navLinkHeaderHotkey.': F">'.formLabelEditSingleEventColor.':
+             <input type="color" name="color" value="' . $event["color"] . '" list="colors" accesskey="f"></label>
+             ' . COLOR_PALETTE . '&nbsp;
+             <input type="checkbox" name="private" id="private"' . $cxPrivate . ' accesskey="p">
+             <label for="private" title="'.formLabelTooltipEditSingleEventPrivate.'&#10;'.formLabelTooltip2EditSingleEventPrivate.'&#10;'.navLinkHeaderHotkey.': P">'.formLabelEditSingleEventPrivate.'</label>&nbsp;
+             <input type="checkbox" name="notification" id="notification"' . $cxNotification . ' accesskey="n">
+             <label for="notification" title="'.formLabelTooltipEditSingleEventNotification.'&#10;'.formLabelTooltip2EditSingleEventNotification.'&#10;'.navLinkHeaderHotkey.': N">'.formLabelEditSingleEventNotification.'</label>
+            </p>
+
+            <p>
+             <label for="description" title="'.formLabelEditSingleEventTooltipDescription.'&#10;'.navLinkHeaderHotkey.': B">'.formLabelEditSingleEventDescription.':</label>
+            ' . BBCODE . '<br>
+             <textarea name="description" id="description" placeholder="'.formLabelEditSingleEventPlaceholderDescription.'" accesskey="b">' . $event["description"] . '</textarea>
+            </p>
+
+            <p>
+             <input type="checkbox" name="copy" id="copy" accesskey="k">
+             <label for="copy" id="copy" title="'.formLabelEditSingleEventTooltipCopy.'&#10;'.formLabelEditSingleEventTooltip2Copy.'&#10;'.navLinkHeaderHotkey.': K">'.formLabelEditSingleEventCopy.'</label> &emsp;
+             <input type="checkbox" name="delete" id="delete" accesskey="l">
+             <label for="delete" id="delete" title="'.formLabelEditSingleEventTooltipDelete.'&#10;'.formLabelEditSingleEventTooltip2Delete.'&#10;'.navLinkHeaderHotkey.': L">'.formLabelEditSingleEventDelete.'</label>
+            </p>
+
+            <p class="paragraph">
+             <input type="hidden" name="id" value="' . $_GET["id"] . '">
+             <input type="hidden" name="action" value="edit">
+             <button type="button" id="submit" accesskey="a" title="'.formLabelEditSingleEventTooltipApplyChanges.'&#10;'.navLinkHeaderHotkey.'y: A">'.formLabelEditSingleEventApplyChanges.'</button>
+            </p>
+        </details>';
+        }
     }
-
     echo FORM_;
 }
 
@@ -467,20 +512,20 @@ if (isset($_GET["calendarSelect"])) {
     $selectYear .= '  </select>';
 
     echo FORM . '
-  <div id="headline">Select Calendar</div>
+        <div id="headline">'.formTitleHeaderSelectCalendar.'</div>
 
-  <p class="paragraph">
-   <label title="Select month&#10;For example, scroll with the mouse wheel.&#10;Access key: M"><u>M</u>onth: 
-   ' . $selectMonth . '</label>&emsp;
-   <label title="Select year&#10;For example, scroll with the mouse wheel.&#10;Access key: J"><u>J</u>ear:
-    ' . $selectYear . '</label>
-  </p>
+        <p class="paragraph">
+         <label title="'.formLabelTooltipSelectCalendarMonth.'&#10;'.formLabelTooltip2SelectCalendarMonth.'&#10;Access key: M">'.formLabelSelectCalendarMonth.': 
+         ' . $selectMonth . '</label>&emsp;
+         <label title="'.formLabelTooltipSelectCalendarYear.'&#10;'.formLabelTooltip2SelectCalendarYear.'&#10;Access key: J">'.formLabelSelectCalendarYear.':
+          ' . $selectYear . '</label>
+        </p>
 
-  <p class="paragraph">
-   <input type="hidden" name="action" value="calendar">
-   <button type="button" id="submit" accesskey="a" title="Show calendar&#10;Access key: A"><u>S</u>how</button>
-  </p>
-  ' . FORM_;
+        <p class="paragraph">
+         <input type="hidden" name="action" value="calendar">
+         <button type="button" id="submit" accesskey="a" title="'.formLabelTooltipShowSelectedCalendar.'&#10;'.navLinkHeaderHotkey.': A">'.formLabelShowSelectedCalendar.'</button>
+        </p>
+        ' . FORM_;
 }
 
 // Login
@@ -490,38 +535,38 @@ if (isset($_GET["login"])) {
 
     if (!USER) {
         echo '
-  <div id="headline">Login</div>
+        <div id="headline">'.formTitleLogin.'</div>
 
-  <p>
-   <label><u>N</u>ame:<br>
-   <input type="text" name="name" autocomplete="username" accesskey="n" required></label>
-  </p>
+        <p>
+         <label>'.formLabelLoginName.':<br>
+         <input type="text" name="name" autocomplete="username" accesskey="n" required></label>
+        </p>
 
-  <p>
-   <label><u>P</u>assword:<br>
-   <input type="password" name="password" autocomplete="current-password" accesskey="p" required></label>
-  </p>
+        <p>
+         <label>'.formLabelLoginPassword.':<br>
+         <input type="password" name="password" autocomplete="current-password" accesskey="p" required></label>
+        </p>
 
-  <p class="paragraph">
-   <input type="hidden" name="action" value="login">
-   <button type="button" id="submit" accesskey="a" autofocus title="Login&#10;Access key: A"><u>L</u>ogin</button>
-  </p>
-  ';
+        <p class="paragraph">
+         <input type="hidden" name="action" value="login">
+         <button type="button" id="submit" accesskey="a" autofocus title="'.formButtonHeaderLogin.'&#10;'.navLinkHeaderHotkey.': A">'.formLabelLogin.'</button>
+        </p>
+        ';
     } else {
 
         // Logout
         echo '
-  <div id="headline">Logout</div>
+        <div id="headline">'.formTitleLogout.'</div>
 
-  <p class="paragraph">
-  <em>' . htmlspecialchars($_SESSION["name"]) . '</em>, are you sure you want to log out?
-  </p>
+        <p class="paragraph">
+        <em>' . htmlspecialchars($_SESSION["name"]) . '</em>, '.formLabelLogoutMessage.'
+        </p>
 
-  <p class="paragraph">
-   <input type="hidden" name="action" value="logout">
-   <button type="button" id="submit" accesskey="a" autofocus title="Logout&#10;Access key: A"><u>L</u>ogout</button>
-  </p>
-  ';
+        <p class="paragraph">
+         <input type="hidden" name="action" value="logout">
+         <button type="button" id="submit" accesskey="a" autofocus title="'.formButtonTooltipLogout.'&#10;'.navLinkHeaderHotkey.': A">'.formButtonLabelLogout.'</button>
+        </p>
+        ';
     }
 
     echo '<input type="hidden" name="year" value="' . $_GET["year"] . '"> <input type="hidden" name="month" value="' . $_GET["month"] . '">' . FORM_;
@@ -588,7 +633,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ]);
         } else {
 
-            // Delete
+            // Delete single event
             if (isset($_POST["delete"])) {
 
                 $delete = $db->prepare("DELETE FROM `calendar` WHERE `id` = :id");
@@ -598,20 +643,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Update
                 $update = $db->prepare("UPDATE `calendar`
                                        SET `event` = :event, `description` = :description, `color` = :color, `private` = :private,
-                                           `holiday` = :holiday, `notification` = :notification, `date_today` = :date_today, `date_end` = :date_end, `time_end` = :time_end, `time_begin` = :time_begin
+                                           `holiday` = :holiday, `notification` = :notification, `date_today` = :date_today, `time_begin` = :time_begin, `time_end` = :time_end
                                        WHERE `id` = :id");
                 $update->execute([
+                    ':id' => $_POST["id"],
                     ':event' => $_POST["event"],
                     ':description' => $_POST["description"],
                     ':color' => $_POST["color"],
                     ':private' => $private,
                     ':holiday' => $holiday,
                     ':notification' => $notification,
-                    ':date_today' => $_POST["date_today"] . " " . $_POST["time_begin"],
-                    ':time_today' => $_POST["time_begin"],
-                    ':start_time' => $_POST["time_begin"],
-                    ':end_time' => $_POST["time_end"],
-                    ':id' => $_POST["id"]
+                    ':date_today' => $_POST["date_today"],
+                    ':time_begin' => $_POST["time_begin"],
+                    ':time_end' => $_POST["time_end"]
                 ]);
             }
         }
@@ -655,7 +699,7 @@ if (isset($_GET["cron"])) {
     // Collect events
     $notification = "";
     foreach ($events as $event) {
-        $notification .= $event["DateFormat"] . ' Time' . PHP_EOL .
+        $notification .= $event["DateFormat"] . ' '.labelHeaderTime.'' . PHP_EOL .
                 $event["event"] . PHP_EOL . stripBBCode($event["description"]) . PHP_EOL . PHP_EOL;
     }
 
@@ -670,6 +714,26 @@ if (isset($_GET["cron"])) {
         mail($EMAIL, $subject, $notification, $header);
     }
 }
+
+//
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['export_ics'])) {
+
+    // Get the event ID from the POST request
+    $event_id = $_POST['event_id'];
+
+    // Fetch the event details from the database
+    $stmt = $db->prepare('SELECT * FROM calendar WHERE id = :id');
+    $stmt->bindParam(':id', $event_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $event = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($event) {
+        generateICS($event);
+    } else {
+        echo "Event not found.";
+    }
+}
+
 
 /*
  * Functions
@@ -742,4 +806,41 @@ function convertLink(array $hit): string {
 
     $url = trim($hit[1]);
     return ' <a href="' . $url . '" target="_blank" rel="noopener" class="link">' . $url . '</a>';
+}
+
+function generateICS($event) {
+    // Create the .ics content
+    $icsContent = "BEGIN:VCALENDAR\r
+";
+    $icsContent .= "VERSION:2.0\r
+";
+    $icsContent .= "PRODID:-//Your Organization//Your Product//EN\r
+";
+    $icsContent .= "BEGIN:VEVENT\r
+";
+    $icsContent .= "UID:" . uniqid() . "\r
+";
+    $icsContent .= "DTSTAMP:" . gmdate('Ymd\THis\Z') . "\r
+";
+    $icsContent .= "DTSTART:" . date('Ymd\THis\Z', strtotime($event['date_begin'] . ' ' . $event['time_begin'])) . "\r
+";
+    $icsContent .= "DTEND:" . date('Ymd\THis\Z', strtotime($event['date_end'] . ' ' . $event['time_end'])) . "\r
+";
+    $icsContent .= "SUMMARY:" . $event['event'] . "\r
+";
+    $icsContent .= "DESCRIPTION:" . $event['description'] . "\r
+";
+    $icsContent .= "END:VEVENT\r
+";
+    $icsContent .= "END:VCALENDAR\r
+";
+
+    // Debugging: log the content to a file
+    //file_put_contents('debug_ics.txt', $icsContent);
+    
+    // Set the headers to download the file
+    header('Content-type: text/calendar; charset=utf-8');
+    header('Content-Disposition: attachment; filename=event.ics');
+    echo $icsContent;
+    exit;
 }
