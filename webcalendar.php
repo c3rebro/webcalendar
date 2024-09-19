@@ -17,7 +17,7 @@ $EMAIL = "";
  * Program-specific settings
  */
 
-// Language. 'de' or 'en'
+// Language. 'de', 'en', 'fr', 'sp', 'pl', 'it', 'gr', 'du'
 $lang = 'de';
 
 // Session configuration statement
@@ -387,7 +387,12 @@ if (isset($_GET["edit"])) {
         <p>
         <div id="event-text" class="event" data-color="' . $event["color"] . '|' . $textColor . '">' . $event["event"] . '</div>
         </p>
-        <button id="export-ics" data-event-id="' . $event["id"] . '">Export to ICS</button>' .    
+
+        <p class="paragraph">
+         <input type="hidden" name="id" value="' . $event["id"] . '">
+         <input type="hidden" name="action" value="export">
+         <button type="button" id="export-ics" data-event-id="' . $event["id"] . ' accesskey="a" title="'.formLabelEditSingleEventTooltipApplyChanges.'&#10;'.navLinkHeaderHotkey.'y: A">'.formLabelEditSingleEventApplyChanges.'</button>
+        </p>'   .
     (!empty($event["description"]) ? '<div id="description">' . textFormatting($event["description"]) . '</div>' : '');
 
     // Edit event by the user if begin and end are equal. (series can only be edited without the start and enddate, one have to recreate them instead)
@@ -611,6 +616,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             list($_POST["year"], $_POST["month"]) = explode("-", $nextDay);
         }
+        
+        // Return to JavaScript
+        echo $_POST["year"] . "|" . floor($_POST["month"]);
     }
 
     // Edit entry
@@ -661,6 +669,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         list($_POST["year"], $_POST["month"]) = explode("-", $_POST["date_today"]);
+        
+        // Return to JavaScript
+        echo $_POST["year"] . "|" . floor($_POST["month"]);
     }
 
     // Login
@@ -672,16 +683,107 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Add session variable (user)
             $_SESSION["name"] = $_POST["name"];
         }
+        
+        // Return to JavaScript
+        echo $_POST["year"] . "|" . floor($_POST["month"]);
     }
 
     // Logout
     if ($_POST["action"] == "logout" && USER) {
 
         session_destroy();
+        
+        // Return to JavaScript
+        echo $_POST["year"] . "|" . floor($_POST["month"]);
     }
 
-    // Return to JavaScript
-    echo $_POST["year"] . "|" . floor($_POST["month"]);
+    // Export ics
+    if ($_POST["action"] == "export") {
+        // Get the event ID from the POST request
+        $event_id = $_POST['id'];
+
+        // Fetch the event details from the database
+        $stmt = $db->prepare('SELECT * FROM calendar WHERE id = :id');
+        $stmt->bindParam(':id', $event_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $event = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($event) {
+            // Get the current timezone
+            $timezone = date_default_timezone_get();
+            
+            // Set the headers to download the file
+            header('Content-type: text/calendar; charset=utf-8');
+            header('Content-Disposition: attachment; filename=event.ics');
+            
+            // Create the .ics content
+            // Get the current timezone
+            $timezone = date_default_timezone_get();
+
+            // Create the .ics content
+            $icsContent = "BEGIN:VCALENDAR\r
+";
+            $icsContent .= "VERSION:2.0\r
+";
+            $icsContent .= "PRODID:-//c3rebro//webcalendar//EN\r
+";
+            $icsContent .= "BEGIN:VTIMEZONE\r
+";
+            $icsContent .= "TZID:{$timezone}\r
+";
+
+            // Add standard and daylight saving time rules if needed
+            // You may need to customize this part based on your specific timezone rules
+            $icsContent .= "BEGIN:STANDARD\r
+";
+            $icsContent .= "DTSTART:19710101T030000\r
+";
+            $icsContent .= "TZOFFSETFROM:+0200\r
+";
+            $icsContent .= "TZOFFSETTO:+0100\r
+";
+            $icsContent .= "TZNAME:CET\r
+";
+            $icsContent .= "END:STANDARD\r
+";
+            $icsContent .= "BEGIN:DAYLIGHT\r
+";
+            $icsContent .= "DTSTART:19710101T020000\r
+";
+            $icsContent .= "TZOFFSETFROM:+0100\r
+";
+            $icsContent .= "TZOFFSETTO:+0200\r
+";
+            $icsContent .= "TZNAME:CEST\r
+";
+            $icsContent .= "END:DAYLIGHT\r
+";
+            $icsContent .= "END:VTIMEZONE\r
+";
+            $icsContent .= "BEGIN:VEVENT\r
+";
+            $icsContent .= "UID:" . uniqid() . "\r
+";
+            $icsContent .= "DTSTAMP:" . gmdate('Ymd\THis\Z') . "\r
+";
+            $icsContent .= "DTSTART;TZID={$timezone}:" . date('Ymd\THis', strtotime($event['date_begin'] . ' ' . $event['time_begin'])) . "\r
+";
+            $icsContent .= "DTEND;TZID={$timezone}:" . date('Ymd\THis', strtotime($event['date_end'] . ' ' . $event['time_end'])) . "\r
+";
+            $icsContent .= "SUMMARY:" . $event['event'] . "\r
+";
+            $icsContent .= "DESCRIPTION:" . $event['description'] . "\r
+";
+            $icsContent .= "END:VEVENT\r
+";
+            $icsContent .= "END:VCALENDAR\r
+";
+            echo $icsContent ;
+    
+        } else {
+            echo "Event not found.";
+        }
+    } 
 }
 
 /*
@@ -714,26 +816,6 @@ if (isset($_GET["cron"])) {
         mail($EMAIL, $subject, $notification, $header);
     }
 }
-
-//
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['export_ics'])) {
-
-    // Get the event ID from the POST request
-    $event_id = $_POST['event_id'];
-
-    // Fetch the event details from the database
-    $stmt = $db->prepare('SELECT * FROM calendar WHERE id = :id');
-    $stmt->bindParam(':id', $event_id, PDO::PARAM_INT);
-    $stmt->execute();
-    $event = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($event) {
-        generateICS($event);
-    } else {
-        echo "Event not found.";
-    }
-}
-
 
 /*
  * Functions
@@ -806,41 +888,4 @@ function convertLink(array $hit): string {
 
     $url = trim($hit[1]);
     return ' <a href="' . $url . '" target="_blank" rel="noopener" class="link">' . $url . '</a>';
-}
-
-function generateICS($event) {
-    // Create the .ics content
-    $icsContent = "BEGIN:VCALENDAR\r
-";
-    $icsContent .= "VERSION:2.0\r
-";
-    $icsContent .= "PRODID:-//Your Organization//Your Product//EN\r
-";
-    $icsContent .= "BEGIN:VEVENT\r
-";
-    $icsContent .= "UID:" . uniqid() . "\r
-";
-    $icsContent .= "DTSTAMP:" . gmdate('Ymd\THis\Z') . "\r
-";
-    $icsContent .= "DTSTART:" . date('Ymd\THis\Z', strtotime($event['date_begin'] . ' ' . $event['time_begin'])) . "\r
-";
-    $icsContent .= "DTEND:" . date('Ymd\THis\Z', strtotime($event['date_end'] . ' ' . $event['time_end'])) . "\r
-";
-    $icsContent .= "SUMMARY:" . $event['event'] . "\r
-";
-    $icsContent .= "DESCRIPTION:" . $event['description'] . "\r
-";
-    $icsContent .= "END:VEVENT\r
-";
-    $icsContent .= "END:VCALENDAR\r
-";
-
-    // Debugging: log the content to a file
-    //file_put_contents('debug_ics.txt', $icsContent);
-    
-    // Set the headers to download the file
-    header('Content-type: text/calendar; charset=utf-8');
-    header('Content-Disposition: attachment; filename=event.ics');
-    echo $icsContent;
-    exit;
 }

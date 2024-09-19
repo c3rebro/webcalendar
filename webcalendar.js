@@ -4,21 +4,22 @@
  */
 
 "use strict";
-const calendar = `webcalendar.php`;
+const zcalendar = `webcalendar.php`;
 const today = new Date();
 
 // Call calendar after the page loads
 window.addEventListener(
         "DOMContentLoaded",
         () => {
-    document.getElementById("zenk-calendar").textContent = `Loading calendar ...`;
-    showCalendar(today.getFullYear(), today.getMonth() + 1);
+            if (document.getElementById("zenk-calendar")) {
+                document.getElementById("zenk-calendar").textContent = `Loading calendar ...`;
+                showCalendar(today.getFullYear(), today.getMonth() + 1);
 
-    // Keyboard instructions (passive: false!)
-    window.addEventListener("keydown", keyboardInstructions);
-    window.addEventListener("resize", windowPosition);
-    
-},
+                // Keyboard instructions (passive: false!)
+                window.addEventListener("keydown", keyboardInstructions);
+                window.addEventListener("resize", windowPosition);
+            }
+        },
         {passive: true}
 );
 
@@ -31,7 +32,7 @@ const showCalendar = (year, month, lang) => {
     month = month < 1 ? 12 : month > 12 ? 1 : month;
 
     // Send request
-    fetch(`${calendar}?calendar&year=${year}&month=${month}`, {
+    fetch(`${zcalendar}?calendar&year=${year}&month=${month}`, {
         method: "GET",
     })
             .then((response) => {
@@ -110,7 +111,7 @@ const showCalendar = (year, month, lang) => {
                         showForm("login", 1, month, year);
                     });
                 }
-
+                
                 // Hide week numbers
                 document.getElementById("showWeekNrSelect").addEventListener("click", showWeekNumbers);
                 let weeks = document.querySelectorAll(".week");
@@ -126,7 +127,7 @@ const showForm = (form, day, month, year, id = 0) => {
     activeEvent(id);
 
     // Send request
-    fetch(`${calendar}?${form}&day=${day}&month=${month}&year=${year}&id=${id}`, {
+    fetch(`${zcalendar}?${form}&day=${day}&month=${month}&year=${year}&id=${id}`, {
         method: "GET",
     })
             .then((response) => {
@@ -178,7 +179,7 @@ const output = (response) => {
                 // Check form (required fields)
                 if (document.getElementById("form").reportValidity()) {
                     // Submit form
-                    fetch(`${calendar}`, {
+                    fetch(`${zcalendar}`, {
                         method: "POST",
                         body: new FormData(document.getElementById("form")),
                     })
@@ -192,14 +193,31 @@ const output = (response) => {
             });
         }
         
-        // Create ics
-        // Register event listeners
+                // Send form
         if (document.getElementById("export-ics")) {
             document.getElementById("export-ics").addEventListener("click", () => {
-                const eventId = document.getElementById("export-ics").dataset.eventId;
-                exportToICS(eventId);
+                // Check form (required fields)
+                fetch(`${zcalendar}`, {
+                        method: "POST",
+                        body: new FormData(document.getElementById("form")),
+                    })
+                            .then((response) => {
+                                return response.blob();
+                            })
+                            .then(blob => {
+                                const url = window.URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.style.display = 'none';
+                                a.href = url;
+                                a.download = 'event.ics';
+                                document.body.appendChild(a);
+                                a.click();
+                                window.URL.revokeObjectURL(url);
+                            })
+                            .catch(error => console.error('Error:', error));
             });
         }
+        
     }
 };
 
@@ -415,7 +433,7 @@ const exportToICS = (eventId) => {
     formData.append('export_ics', true);
     formData.append('event_id', eventId);
 
-    fetch(`${calendar}`, {
+    fetch(`${zcalendar}`, {
         method: "POST",
         body: formData
     })
