@@ -7,7 +7,7 @@ This is a Fork from Werner Zenks webcalendar. You can obtain a copy of the origi
 * ***Which browsers are supported?*** Chrome, Firefox, LibreWolf, Opera, Opera GX, Edge, Chromium, Brave, Vivaldi, and Safari.
 
 ## Install
-Copy calendar.php, webcalendar.js and webcalendar.css to your www dir and insert a div with the "kalender" keyword id into your html. Update file permissions as needed and have a look at the paths to point to the stylesheet and the javascript. Do not forget the location of the calendar.php. Its location has to be updated in webcalendar.js on the first lines...
+Copy calendar.php, webcalendar.js and webcalendar.css to your www dir and insert a div with the "zenk-calendar" keyword id into your html. Update file permissions as needed and have a look at the paths to point to the stylesheet and the javascript. Do not forget the location of the calendar.php. Its location has to be updated in webcalendar.js on the first lines. You can define the calendar language and timezone (important for ics export) inside the webcalendar.php
 
 ```
 <!DOCTYPE html>
@@ -27,7 +27,7 @@ Copy calendar.php, webcalendar.js and webcalendar.css to your www dir and insert
     </style>
   </head>
   <body>
-    <div id="kalender" style="max-width:800px;"><noscript>This Webcalendar needs JavaScript enabled!</noscript></div>
+    <div id="zenk-calendar" style="max-width:800px;"><noscript>This Webcalendar needs JavaScript enabled!</noscript></div>
   </body>
 </html>
 ```
