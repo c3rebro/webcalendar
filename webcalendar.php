@@ -18,7 +18,7 @@ $EMAIL = "";
  */
 
 // Language. 'de', 'en', 'fr', 'sp', 'pl', 'it', 'gr', 'du'
-$lang = 'de';
+$lang = 'en';
 
 // Session configuration statement
 session_start();
@@ -391,7 +391,7 @@ if (isset($_GET["edit"])) {
         <p class="paragraph">
          <input type="hidden" name="id" value="' . $event["id"] . '">
          <input type="hidden" name="action" value="export">
-         <button type="button" id="export-ics" data-event-id="' . $event["id"] . ' accesskey="a" title="'.formLabelEditSingleEventTooltipApplyChanges.'&#10;'.navLinkHeaderHotkey.'y: A">'.formLabelEditSingleEventApplyChanges.'</button>
+         <button type="button" id="export-ics" data-event-id="' . $event["id"] . ' accesskey="a" title="'.formLabelEditSingleEventTooltipExportEvent.'&#10;'.navLinkHeaderHotkey.'y: A">'.formLabelEditSingleEventExportEvent.'</button>
         </p>'   .
     (!empty($event["description"]) ? '<div id="description">' . textFormatting($event["description"]) . '</div>' : '');
 

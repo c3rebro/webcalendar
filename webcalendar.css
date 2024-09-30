@@ -224,6 +224,9 @@ div#title-bar {
   top: 0px;
   cursor: move;
   min-width: 220px;
+  padding-left: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 /* Calendar icon */
