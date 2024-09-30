@@ -1,60 +1,33 @@
 <!DOCTYPE html>
-<html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light dark" />
+<html data-bs-theme="light" lang="de">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Event-Kalender (SQLite)</title>
-    <!--    <link rel="stylesheet" href="https://raw.githubusercontent.com/c3rebro/webcalendar/refs/heads/master/webcalendar.css" /> -->
-    <!-- <script src="https://raw.githubusercontent.com/c3rebro/webcalendar/refs/heads/master/webcalendar.js" defer></script> -->
-    <style>
-      /* Nur für diese Demo! */
-      body {
-        margin: 3rem 1rem 68rem 0.5rem;
-      }
-    </style>
-  </head>
-  <body>
-    <p>
-      This is a Fork from Werner Zenks webcalendar. You can obtain a copy of the
-      original from
-      <a href="https://www.mobirise-tutorials.com/Download-Archiv/"
-        >Tommy Hermanns&#39;s Archive</a
-      >
-    </p>
-    <h1 id="webcalendar">webcalendar</h1>
-    <ul>
-      <li>
-        <strong><em>What does it do?</em></strong> With the event calendar you
-        can save events in a DB table (SQLite database file). The events are
-        clearly displayed in a calendar. Navigation of the calendar is
-        completely via JavaScript (Ajax), so no page changes are necessary. The
-        calendar shows all the days of a month in the form of an HTML table.
-        Buttons can be used to navigate to the previous month / previous year or
-        the coming month / year. Events can be entered directly in the calendar
-        (edit, move, copy or delete).
-      </li>
-      <li>
-        <strong><em>Why is it useful?</em></strong> No installation or container
-        environments needed. The requirements are just php 7 or up. Works with
-        local sqlite_3 php extension.
-      </li>
-      <li>
-        <strong><em>Which browsers are supported?</em></strong> Chrome, Firefox,
-        LibreWolf, Opera, Opera GX, Edge, Chromium, Brave, Vivaldi, and Safari.
-      </li>
-    </ul>
-    <h2 id="install">Install</h2>
-    <p>
-      Copy calendar.php, webcalendar.js and webcalendar.css to your www dir and
-      insert a div with the &quot;zenk-calendar&quot; keyword id into your html.
-      Update file permissions as needed and have a look at the paths to point to
-      the stylesheet and the javascript. Do not forget the location of the
-      calendar.php. Its location has to be updated in webcalendar.js on the
-      first lines. You can define the calendar language and timezone (important
-      for ics export) inside the webcalendar.php
-    </p>
-    <pre><code><span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="row">
+        <div class="col">
+            <div>
+                <p class="h1 text-center">c3rebro webcalendar</p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <p> This is a Fork from Werner Zenks webcalendar. You can obtain a copy of the original from <a href="https://www.mobirise-tutorials.com/Download-Archiv/">Tommy Hermanns's Archive</a></p>
+            <h1 id="webcalendar">webcalendar</h1>
+            <ul>
+                <li><strong><em>What does it do?</em></strong> With the event calendar you can save events in a DB table (SQLite database file). The events are clearly displayed in a calendar. Navigation of the calendar is completely via JavaScript (Ajax), so no page changes are necessary. The calendar shows all the days of a month in the form of an HTML table. Buttons can be used to navigate to the previous month / previous year or the coming month / year. Events can be entered directly in the calendar (edit, move, copy or delete). </li>
+                <li><strong><em>Why is it useful?</em></strong> No installation or container environments needed. The requirements are just php 7 or up. Works with local sqlite_3 php extension. </li>
+                <li><strong><em>Which browsers are supported?</em></strong> Chrome, Firefox, LibreWolf, Opera, Opera GX, Edge, Chromium, Brave, Vivaldi, and Safari. </li>
+            </ul>
+            <h2 id="install">Install</h2>
+            <p> Copy calendar.php, webcalendar.js and webcalendar.css to your www dir and insert a div with the "zenk-calendar" keyword id into your html. Update file permissions as needed and have a look at the paths to point to the stylesheet and the javascript. Do not forget the location of the calendar.php. Its location has to be updated in webcalendar.js on the first lines. You can define the calendar language and timezone (important for ics export) inside the webcalendar.php </p><pre><code><span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">"de"</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span> /&gt;</span>
@@ -75,34 +48,15 @@
   <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
 </code></pre>
-    <h2 id="screenshots">Screenshots</h2>
-    <p>
-      Default &quot;light&quot; layout:<br />
-      <img
-        src="https://github.com/c3rebro/webcalendar/blob/master/docs/Clipboard01.jpg?raw=true"
-        width="800px"
-      />
-    </p>
-    <p>
-      Summary of appointment:<br />
-      <img
-        src="https://github.com/c3rebro/webcalendar/blob/master/docs/Clipboard02.jpg?raw=true"
-        width="800px"
-      />
-    </p>
-    <p>
-      Login for administrator:<br />
-      <img
-        src="https://github.com/c3rebro/webcalendar/blob/master/docs/Clipboard03.jpg?raw=true"
-        width="800px"
-      />
-    </p>
-    <p>
-      Create a new event:<br />
-      <img
-        src="https://github.com/c3rebro/webcalendar/blob/master/docs/Clipboard04.jpg?raw=true"
-        width="800px"
-      />
-    </p>
-  </body>
+            <h2 id="screenshots">Screenshots</h2>
+            <p> Default "light" layout:<br><img class="img-fluid" src="https://github.com/c3rebro/webcalendar/blob/master/docs/Clipboard01.jpg?raw=true" width=""></p>
+            <p> Summary of appointment:<br><img class="img-fluid" src="https://github.com/c3rebro/webcalendar/blob/master/docs/Clipboard02.jpg?raw=true" width=""></p>
+            <p> Login for administrator:<br><img class="img-fluid" src="https://github.com/c3rebro/webcalendar/blob/master/docs/Clipboard03.jpg?raw=true" width=""></p>
+            <p> Create a new event:<br><img class="img-fluid" src="https://github.com/c3rebro/webcalendar/blob/master/docs/Clipboard04.jpg?raw=true" width=""></p>
+        </div>
+        <div class="col-1"></div>
+    </div>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
 </html>
