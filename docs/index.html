@@ -5,9 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
     <title>Event-Kalender (SQLite)</title>
-    <link rel="stylesheet" href="https://raw.githubusercontent.com/c3rebro/webcalendar/refs/heads/master/webcalendar.css" />
-    <script src="https://raw.githubusercontent.com/c3rebro/webcalendar/refs/heads/master/webcalendar.js" defer></script>
+    <!--    <link rel="stylesheet" href="https://raw.githubusercontent.com/c3rebro/webcalendar/refs/heads/master/webcalendar.css" /> -->
+    <!-- <script src="https://raw.githubusercontent.com/c3rebro/webcalendar/refs/heads/master/webcalendar.js" defer></script> -->
+    <script>
+      // Function to load a CSS file. This is a woraround for github docs only. Use the above as usual.
+      function loadCSS(url) {
+          fetch(url)
+              .then(response => response.text())
+              .then(css => {
+                  const style = document.createElement('style');
+                  style.textContent = css;
+                  document.head.appendChild(style);
+              })
+              .catch(error => console.error('Error loading CSS:', error));
+      }
 
+      // Function to load a JS file
+      function loadJS(url) {
+          fetch(url)
+              .then(response => response.text())
+              .then(js => {
+                  const script = document.createElement('script');
+                  script.textContent = js;
+                  document.body.appendChild(script);
+              })
+              .catch(error => console.error('Error loading JS:', error));
+      }
+
+      // URLs of the CSS and JS files
+      const cssUrl = 'https://raw.githubusercontent.com/c3rebro/webcalendar/refs/heads/master/webcalendar.css';
+      const jsUrl = 'https://raw.githubusercontent.com/c3rebro/webcalendar/refs/heads/master/webcalendar.js';
+
+      // Load the CSS and JS files
+      loadCSS(cssUrl);
+      loadJS(jsUrl);
+  </script>
     <p>
       This is a Fork from Werner Zenks webcalendar. You can obtain a copy of the
       original from
