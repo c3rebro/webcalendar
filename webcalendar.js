@@ -4,7 +4,7 @@
  */
 
 "use strict";
-const zcalendar = `https://raw.githubusercontent.com/c3rebro/webcalendar/refs/heads/master/webcalendar.php`;
+const zcalendar = `webcalendar.php`;
 const today = new Date();
 
 // Call calendar after the page loads
