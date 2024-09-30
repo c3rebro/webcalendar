@@ -7,39 +7,14 @@
     <title>Event-Kalender (SQLite)</title>
     <!--    <link rel="stylesheet" href="https://raw.githubusercontent.com/c3rebro/webcalendar/refs/heads/master/webcalendar.css" /> -->
     <!-- <script src="https://raw.githubusercontent.com/c3rebro/webcalendar/refs/heads/master/webcalendar.js" defer></script> -->
-    <script>
-      // Function to load a CSS file. This is a woraround for github docs only. Use the above as usual.
-      function loadCSS(url) {
-          fetch(url)
-              .then(response => response.text())
-              .then(css => {
-                  const style = document.createElement('style');
-                  style.textContent = css;
-                  document.head.appendChild(style);
-              })
-              .catch(error => console.error('Error loading CSS:', error));
+    <style>
+      /* Nur für diese Demo! */
+      body {
+        margin: 3rem 1rem 68rem 0.5rem;
       }
-
-      // Function to load a JS file
-      function loadJS(url) {
-          fetch(url)
-              .then(response => response.text())
-              .then(js => {
-                  const script = document.createElement('script');
-                  script.textContent = js;
-                  document.body.appendChild(script);
-              })
-              .catch(error => console.error('Error loading JS:', error));
-      }
-
-      // URLs of the CSS and JS files
-      const cssUrl = 'https://raw.githubusercontent.com/c3rebro/webcalendar/refs/heads/master/webcalendar.css';
-      const jsUrl = 'https://raw.githubusercontent.com/c3rebro/webcalendar/refs/heads/master/webcalendar.js';
-
-      // Load the CSS and JS files
-      loadCSS(cssUrl);
-      loadJS(jsUrl);
-  </script>
+    </style>
+  </head>
+  <body>
     <p>
       This is a Fork from Werner Zenks webcalendar. You can obtain a copy of the
       original from
@@ -103,31 +78,31 @@
     <h2 id="screenshots">Screenshots</h2>
     <p>
       Default &quot;light&quot; layout:<br />
-      <img src="docs/Clipboard01.jpg" width="800px" />
+      <img
+        src="https://github.com/c3rebro/webcalendar/blob/master/docs/Clipboard01.jpg?raw=true"
+        width="800px"
+      />
     </p>
     <p>
       Summary of appointment:<br />
-      <img src="docs/Clipboard02.jpg" width="800px" />
+      <img
+        src="https://github.com/c3rebro/webcalendar/blob/master/docs/Clipboard02.jpg?raw=true"
+        width="800px"
+      />
     </p>
     <p>
       Login for administrator:<br />
-      <img src="docs/Clipboard03.jpg" width="800px" />
+      <img
+        src="https://github.com/c3rebro/webcalendar/blob/master/docs/Clipboard03.jpg?raw=true"
+        width="800px"
+      />
     </p>
     <p>
       Create a new event:<br />
-      <img src="docs/Clipboard04.jpg" width="800px" />
+      <img
+        src="https://github.com/c3rebro/webcalendar/blob/master/docs/Clipboard04.jpg?raw=true"
+        width="800px"
+      />
     </p>
-
-    <style>
-      /* Nur für diese Demo! */
-      body {
-        margin: 3rem 1rem 68rem 0.5rem;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="zenk-calendar">
-      <noscript>Der Kalender verwendet zur Darstellung JavaScript!</noscript>
-    </div>
   </body>
 </html>
