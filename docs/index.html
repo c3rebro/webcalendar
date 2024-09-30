@@ -5,8 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
     <title>Event-Kalender (SQLite)</title>
-    <link rel="stylesheet" href="webcalendar.css" />
-    <script src="webcalendar.js" defer></script>
+    <link rel="stylesheet" href="https://raw.githubusercontent.com/c3rebro/webcalendar/refs/heads/master/webcalendar.css" />
+    <script src="https://raw.githubusercontent.com/c3rebro/webcalendar/refs/heads/master/webcalendar.js" defer></script>
+
+    <p>
+      This is a Fork from Werner Zenks webcalendar. You can obtain a copy of the
+      original from
+      <a href="https://www.mobirise-tutorials.com/Download-Archiv/"
+        >Tommy Hermanns&#39;s Archive</a
+      >
+    </p>
+    <h1 id="webcalendar">webcalendar</h1>
+    <ul>
+      <li>
+        <strong><em>What does it do?</em></strong> With the event calendar you
+        can save events in a DB table (SQLite database file). The events are
+        clearly displayed in a calendar. Navigation of the calendar is
+        completely via JavaScript (Ajax), so no page changes are necessary. The
+        calendar shows all the days of a month in the form of an HTML table.
+        Buttons can be used to navigate to the previous month / previous year or
+        the coming month / year. Events can be entered directly in the calendar
+        (edit, move, copy or delete).
+      </li>
+      <li>
+        <strong><em>Why is it useful?</em></strong> No installation or container
+        environments needed. The requirements are just php 7 or up. Works with
+        local sqlite_3 php extension.
+      </li>
+      <li>
+        <strong><em>Which browsers are supported?</em></strong> Chrome, Firefox,
+        LibreWolf, Opera, Opera GX, Edge, Chromium, Brave, Vivaldi, and Safari.
+      </li>
+    </ul>
+    <h2 id="install">Install</h2>
+    <p>
+      Copy calendar.php, webcalendar.js and webcalendar.css to your www dir and
+      insert a div with the &quot;zenk-calendar&quot; keyword id into your html.
+      Update file permissions as needed and have a look at the paths to point to
+      the stylesheet and the javascript. Do not forget the location of the
+      calendar.php. Its location has to be updated in webcalendar.js on the
+      first lines. You can define the calendar language and timezone (important
+      for ics export) inside the webcalendar.php
+    </p>
+    <pre><code><span class="hljs-meta">&lt;!DOCTYPE html&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">"de"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width, initial-scale=1.0"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"color-scheme"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"light dark"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Event-Calendar (SQLite)<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"webcalendar.css"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"webcalendar.js"</span> <span class="hljs-attr">defer</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">style</span>&gt;</span><span class="css">
+      <span class="hljs-comment">/* Only for this Demo! */</span>
+      <span class="hljs-selector-tag">body</span> {
+        <span class="hljs-attribute">margin</span>: <span class="hljs-number">3rem</span> <span class="hljs-number">1rem</span> <span class="hljs-number">68rem</span> <span class="hljs-number">0.5rem</span>;
+      }
+    </span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"zenk-calendar"</span> <span class="hljs-attr">style</span>=<span class="hljs-string">"max-width:800px;"</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">noscript</span>&gt;</span>This Webcalendar needs JavaScript enabled!<span class="hljs-tag">&lt;/<span class="hljs-name">noscript</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
+</code></pre>
+    <h2 id="screenshots">Screenshots</h2>
+    <p>
+      Default &quot;light&quot; layout:<br />
+      <img src="docs/Clipboard01.jpg" width="800px" />
+    </p>
+    <p>
+      Summary of appointment:<br />
+      <img src="docs/Clipboard02.jpg" width="800px" />
+    </p>
+    <p>
+      Login for administrator:<br />
+      <img src="docs/Clipboard03.jpg" width="800px" />
+    </p>
+    <p>
+      Create a new event:<br />
+      <img src="docs/Clipboard04.jpg" width="800px" />
+    </p>
+
     <style>
       /* Nur für diese Demo! */
       body {
@@ -15,6 +94,8 @@
     </style>
   </head>
   <body>
-    <div id="kalender"><noscript>Der Kalender verwendet zur Darstellung JavaScript!</noscript></div>
+    <div id="kalender">
+      <noscript>Der Kalender verwendet zur Darstellung JavaScript!</noscript>
+    </div>
   </body>
 </html>
